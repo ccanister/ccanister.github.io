@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="我在Angular文档中读到于Dom有关的时候，发现总会提及到以下几个名词:ElementRef,TemplateRef,ViewContainerRef等等。但是，Angular文档和其他博客等，都没有对这些名词有着相关联的描述和他们如何使用的例子。本文目的就是尽可能描述清楚。  &amp;lt; !–more–&amp;gt;   如果你是从Angular.js转到Angular2或者更高版本，会发现操作">
+<meta name="description" content="我在Angular文档中读到于Dom有关的时候，发现总会提及到以下几个名词:ElementRef,TemplateRef,ViewContainerRef等等。但是，Angular文档和其他博客等，都没有对这些名词有着相关联的描述和他们如何使用的例子。本文目的就是尽可能描述清楚。   &amp;lt; !–more–&amp;gt;   如果你是从Angular.js转到Angular2或者更高版本，会发现操">
 <meta property="og:type" content="article">
 <meta property="og:title" content="探索如何使用`ViewContainerRef`操作`Dom`节点">
 <meta property="og:url" content="http://yoursite.com/2018/10/15/viewContainerRef/index.html">
 <meta property="og:site_name" content="食饼筒">
-<meta property="og:description" content="我在Angular文档中读到于Dom有关的时候，发现总会提及到以下几个名词:ElementRef,TemplateRef,ViewContainerRef等等。但是，Angular文档和其他博客等，都没有对这些名词有着相关联的描述和他们如何使用的例子。本文目的就是尽可能描述清楚。  &amp;lt; !–more–&amp;gt;   如果你是从Angular.js转到Angular2或者更高版本，会发现操作">
+<meta property="og:description" content="我在Angular文档中读到于Dom有关的时候，发现总会提及到以下几个名词:ElementRef,TemplateRef,ViewContainerRef等等。但是，Angular文档和其他博客等，都没有对这些名词有着相关联的描述和他们如何使用的例子。本文目的就是尽可能描述清楚。   &amp;lt; !–more–&amp;gt;   如果你是从Angular.js转到Angular2或者更高版本，会发现操">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-15T11:12:14.120Z">
+<meta property="og:updated_time" content="2018-10-15T11:17:54.214Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="探索如何使用`ViewContainerRef`操作`Dom`节点">
-<meta name="twitter:description" content="我在Angular文档中读到于Dom有关的时候，发现总会提及到以下几个名词:ElementRef,TemplateRef,ViewContainerRef等等。但是，Angular文档和其他博客等，都没有对这些名词有着相关联的描述和他们如何使用的例子。本文目的就是尽可能描述清楚。  &amp;lt; !–more–&amp;gt;   如果你是从Angular.js转到Angular2或者更高版本，会发现操作">
+<meta name="twitter:description" content="我在Angular文档中读到于Dom有关的时候，发现总会提及到以下几个名词:ElementRef,TemplateRef,ViewContainerRef等等。但是，Angular文档和其他博客等，都没有对这些名词有着相关联的描述和他们如何使用的例子。本文目的就是尽可能描述清楚。   &amp;lt; !–more–&amp;gt;   如果你是从Angular.js转到Angular2或者更高版本，会发现操">
 
 
 
@@ -299,7 +299,8 @@
       
 
       
-        <p>  我在<code>Angular</code>文档中读到于<code>Dom</code>有关的时候，发现总会提及到以下几个名词:<code>ElementRef</code>,<code>TemplateRef</code>,<code>ViewContainerRef</code>等等。但是，<code>Angular</code>文档和其他博客等，都没有对这些名词有着相关联的描述和他们如何使用的例子。本文目的就是尽可能描述清楚。<br>  &lt; !–more–&gt;</p>
+        <p>  我在<code>Angular</code>文档中读到于<code>Dom</code>有关的时候，发现总会提及到以下几个名词:<code>ElementRef</code>,<code>TemplateRef</code>,<code>ViewContainerRef</code>等等。但是，<code>Angular</code>文档和其他博客等，都没有对这些名词有着相关联的描述和他们如何使用的例子。本文目的就是尽可能描述清楚。</p>
+<p>  &lt; !–more–&gt;</p>
 <p>  如果你是从<code>Angular.js</code>转到<code>Angular2</code>或者更高版本，会发现操作<code>Dom</code>节点是非常简单的。<code>Angular</code>将<code>Dom element</code>注入到<code>link function</code>,这样你就可以在<code>component</code>文件中查询、添加和移除节点。但是，这个方法有严重问题：和浏览器平台绑定。</p>
 <p>  <code>Angular2</code>及之后版本可以运行在不同浏览器版本上，包括移动平台和<code>web</code>平台。所以需要在平台特定<code>API</code>和框架接口中作出抽象层。在<code>Angular</code>中，抽象层指的就是以下引用类型：<code>ElementRef</code>,<code>TemplateRef</code>,<code>ViewContainerRef</code>,<code>ComponentRef</code>和<code>ViewContainerRef</code>。我们会查看每个类型具体用法以及操作<code>DOM</code>节点方法。</p>
 <h2 id="ViewChild"><a href="#ViewChild" class="headerlink" title="@ViewChild"></a>@ViewChild</h2><p>  在探讨抽象层之前，我们需要明白如何在<code>component</code>或者<code>directive</code>类中得到其引用。<code>Angular</code>提供一种<code>Dom</code>查询机制，采用<code>@ViewChild</code>和<code>@Viewchildren</code>的修饰器。两个功能是一样的吗，前者返回只返回一个类型引用，后者返回多个类型引用。本文使用<code>ViewChild</code>不加<code>@</code>代替该修饰器。</p>
