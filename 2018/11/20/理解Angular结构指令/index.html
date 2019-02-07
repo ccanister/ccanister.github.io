@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="理解Angular结构指令​    在这篇文章中，我们将会利用自定义的结构指令创建轮播组件。我们先探讨Angular提供的微语法，再利用其领域专用语言描述指令的输入。 ​    完整想的效果如下图所示:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="原型继承是如何实现的">
+<meta property="og:url" content="http://yoursite.com/2018/11/20/理解Angular结构指令/index.html">
+<meta property="og:site_name" content="稠鱼烧才好吃">
+<meta property="og:description" content="理解Angular结构指令​    在这篇文章中，我们将会利用自定义的结构指令创建轮播组件。我们先探讨Angular提供的微语法，再利用其领域专用语言描述指令的输入。 ​    完整想的效果如下图所示:">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Documents/img/constructor_directive_5.gif">
+<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Documents/img/constructor_directive_1.png">
+<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Documents/img/constructor_directive_2.png">
+<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Documents/img/constructor_directive_3.png">
+<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Documents/img/constructor_directive_4.png">
+<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Documents/img/constructor_directive_6.gif">
+<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Documents/img/constructor_directive_7.gif">
+<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Documents/img/constructor_directive_8.gif">
+<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Documents/img/constructor_directive_9.gif">
+<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Documents/img/constructor_directive_10.gif">
+<meta property="og:updated_time" content="2019-02-07T16:32:39.615Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="原型继承是如何实现的">
+<meta name="twitter:description" content="理解Angular结构指令​    在这篇文章中，我们将会利用自定义的结构指令创建轮播组件。我们先探讨Angular提供的微语法，再利用其领域专用语言描述指令的输入。 ​    完整想的效果如下图所示:">
+<meta name="twitter:image" content="http://yoursite.com/Users/zhaorenjie/Documents/img/constructor_directive_5.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/11/20/理解Angular结构指令/"/>
+
+
+
+
+
+  <title>原型继承是如何实现的 | 稠鱼烧才好吃</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">稠鱼烧才好吃</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/20/理解Angular结构指令/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="食饼筒">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="稠鱼烧才好吃">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">原型继承是如何实现的</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-20T15:26:15+08:00">
+                2018-11-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Angular/" itemprop="url" rel="index">
+                    <span itemprop="name">Angular</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="理解Angular结构指令"><a href="#理解Angular结构指令" class="headerlink" title="理解Angular结构指令"></a>理解Angular结构指令</h1><p>​    在这篇文章中，我们将会利用自定义的结构指令创建轮播组件。我们先探讨Angular提供的微语法，再利用其领域专用语言描述指令的输入。</p>
+<p>​    完整想的效果如下图所示:<img src="/Users/zhaorenjie/Documents/img/constructor_directive_5.gif" alt="constructor_directive_5"><br><a id="more"></a></p>
+<h2 id="模板指令微语法"><a href="#模板指令微语法" class="headerlink" title="模板指令微语法"></a>模板指令微语法</h2><p><img src="/Users/zhaorenjie/Documents/img/constructor_directive_1.png" alt="constructo-directive_1"></p>
+<ul>
+<li><code>*carousel</code>代表指令名。<code>*</code>符号表示该指令是结构指令。Angular会自动识别该符号并翻译成主元素和后代元素<code>&lt;ng-template&gt;</code>上的属性。</li>
+<li><code>let</code>关键词声明了一个模板变量，允许你在模板中使用。</li>
+<li><code>from</code>是绑定关键字。你可以自由命名。在这里，我们将其声明为<code>from</code>，并创建了可读性较高的字符串<code>image from images</code>。</li>
+<li><code>images</code>是我们想传递给指令的变量值。</li>
+</ul>
+<p>​        Angular会根据<code>directive</code>指令名（<code>carousel</code>）和绑定关键字<code>from</code>去绑定<code>Input</code>属性值。这意味着，在指令内部，我们会用<code>images</code>去引用接受外部传来变量<code>@Input()carouselFrom</code>。<img src="/Users/zhaorenjie/Documents/img/constructor_directive_2.png" alt="custructor_directive_2"></p>
+<h2 id="领域专用术语（DSL）"><a href="#领域专用术语（DSL）" class="headerlink" title="领域专用术语（DSL）"></a>领域专用术语（DSL）</h2><p>​    在指令内部，你可以用Angular提供的方法去做任何事。你被允许创建多个绑定值。让我们添加两个额外的<code>inputs</code>属性来操作轮播。<img src="/Users/zhaorenjie/Documents/img/constructor_directive_3.png" alt="constructor_directive_3"></p>
+<h2 id="上下文变量"><a href="#上下文变量" class="headerlink" title="上下文变量"></a>上下文变量</h2><p>​    当我们创建内嵌视图时候，我们可以传递变量。它包含了所有我们想在模板中使用的属性。<img src="/Users/zhaorenjie/Documents/img/constructor_directive_4.png" alt="constructor_directive_4"></p>
+<p>​    我们不知道开发者在模板中想要用哪个变量名。开发者可以使用<code>let image</code>，<code>let img</code>甚至<code>let item</code>。在上下文变量中，有个特殊变量叫做<code>$implicit</code>。当开发者使用<code>let anyVariableName</code>时候，它实际上时绑定了上下文变量中键为<code>$implicit</code>的值。这意味着：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> *<span class="attr">carousel</span>=<span class="string">"let image"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>等同于</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> *<span class="attr">carousel</span>=<span class="string">"let image = $implicit"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>​    其他值必须在上下文变量中明确的定义，并在HTML变量中绑定引用。在轮播指令中，我们将暴露出<code>controller</code>变量提供给开发者用来改变当前展示的图片。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> *<span class="attr">carousel</span>=<span class="string">"let image;let ctrl = control"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>​    现在我们理解了微语法和上下文变量，我们利用他们来实现轮播组件。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  selector: <span class="string">'[carousel]'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> CarouselDirective <span class="keyword">implements</span> OnInit &#123;</span><br><span class="line">  context: CarouselContext | <span class="literal">null</span> = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span></span><br><span class="line"><span class="params">    <span class="keyword">private</span> tpl: TemplateRef&lt;CarouselContext&gt;,</span></span><br><span class="line"><span class="params">    <span class="keyword">private</span> vcr: ViewContainerRef</span></span><br><span class="line"><span class="params">  </span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Input</span>(<span class="string">'carouselFrom'</span>) images: <span class="built_in">string</span>[];</span><br><span class="line"></span><br><span class="line">  ngOnInit(): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="keyword">this</span>.context = &#123;</span><br><span class="line">      $implicit: <span class="keyword">this</span>.images[<span class="number">0</span>],</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.vcr.createEmbeddedView(<span class="keyword">this</span>.tpl, <span class="keyword">this</span>.context);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    </p>
+<p>​    和大部分结构指令一样，我们注入<code>TemplateRef</code>变量，并利用注入的<code>ViewContainerRef</code>变量创建内嵌视图。我们暂时将<code>content.$implicit</code>指向<code>@Input</code>属性的images变量的第一个image。</p>
+<p>​    轮播目前总是展示第一张图片，因为我们还没实现<code>controller</code>变量。</p>
+<p><img src="/Users/zhaorenjie/Documents/img/constructor_directive_6.gif" alt="constructor_directive_6"></p>
+<p>​     接着，我们利用<code>controller</code>变量来扩展<code>TemplateRef</code>的上下文变量。它实现了<code>next</code>和<code>prev</code>方法，当开发者调用它们时能够改变目前展示图片。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  selector: <span class="string">'[carousel]'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> CarouselDirective <span class="keyword">implements</span> OnInit &#123;</span><br><span class="line">  context: CarouselContext | <span class="literal">null</span> = <span class="literal">null</span>;</span><br><span class="line">  index = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span></span><br><span class="line"><span class="params">    <span class="keyword">private</span> tpl: TemplateRef&lt;CarouselContext&gt;,</span></span><br><span class="line"><span class="params">    <span class="keyword">private</span> vcr: ViewContainerRef</span></span><br><span class="line"><span class="params">  </span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Input</span>(<span class="string">'carouselFrom'</span>) images: <span class="built_in">string</span>[];</span><br><span class="line"></span><br><span class="line">  ngOnInit(): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="keyword">this</span>.context = &#123;</span><br><span class="line">      $implicit: <span class="keyword">this</span>.images[<span class="number">0</span>],</span><br><span class="line">      controller: &#123;</span><br><span class="line">        next: <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">this</span>.next(),</span><br><span class="line">        prev: <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">this</span>.prev()</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.vcr.createEmbeddedView(<span class="keyword">this</span>.tpl, <span class="keyword">this</span>.context);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  next() &#123;</span><br><span class="line">    <span class="keyword">this</span>.index++;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.index &gt;= <span class="keyword">this</span>.images.length) &#123;</span><br><span class="line">      <span class="keyword">this</span>.index = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.context.$implicit = <span class="keyword">this</span>.images[<span class="keyword">this</span>.index];</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  prev() &#123;</span><br><span class="line">    <span class="keyword">this</span>.index--;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.index &lt; <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">this</span>.index = <span class="keyword">this</span>.images.length - <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.context.$implicit = <span class="keyword">this</span>.images[<span class="keyword">this</span>.index];</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>​    在HTML模板中，我们绑定变量模板来取得<code>controller</code>变量。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> *<span class="attr">carousel</span>=<span class="string">"let image from images; let ctrl = controller"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">img</span> [<span class="attr">src</span>]=<span class="string">"image"</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">"ctrl.prev()"</span>&gt;</span>Previous<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">"ctrl.next()"</span>&gt;</span>Next<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img src="/Users/zhaorenjie/Documents/img/constructor_directive_7.gif" alt="constructor_directive_7"></p>
+<h2 id="自动播放"><a href="#自动播放" class="headerlink" title="自动播放"></a>自动播放</h2><p>​    现在我们已经实现了基本功能，可以在其基础上添加更多功能。</p>
+<p>​    首先，我们创建<code>carouselAutoplay@Input</code>属性。如果打开自动播放功能，我们创建一个定时器能够周期性得进行轮播。否则，我们清除定时器。为了防止内存泄漏，在组件销毁后，我们需要销毁该定时器。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  selector: <span class="string">'[carousel]'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> CarouselDirective <span class="keyword">implements</span> OnInit, OnDestroy &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  timerId: <span class="built_in">number</span> | <span class="literal">null</span> = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Input</span>(<span class="string">'carouselAutoplay'</span>)</span><br><span class="line">  <span class="keyword">set</span> autoplay(autoplay: <span class="string">'on'</span> | <span class="string">'off'</span>) &#123;</span><br><span class="line">    autoplay === <span class="string">'on'</span> ? <span class="keyword">this</span>.setAutoplayTimer() : <span class="keyword">this</span>.clearAutoplayTimer();</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  ngOnDestroy() &#123;</span><br><span class="line">    <span class="keyword">this</span>.clearAutoplayTimer();</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">private</span> clearAutoplayTimer() &#123;</span><br><span class="line">    <span class="built_in">window</span>.clearInterval(<span class="keyword">this</span>.timerId);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> setAutoplayTimer() &#123;</span><br><span class="line">    <span class="keyword">this</span>.timerId = <span class="built_in">window</span>.setInterval(<span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">this</span>.next(), <span class="number">1000</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    最后我们添加<code>carouselAutoplay@Input</code>允许用户决定轮播的间隔时间，同时设置默认值为1s。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  selector: <span class="string">'[carousel]'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> CarouselDirective <span class="keyword">implements</span> OnInit, OnDestroy &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="keyword">private</span> _autoplayDelay: <span class="built_in">number</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Input</span>(<span class="string">'carouselWithDelay'</span>)</span><br><span class="line">  <span class="keyword">set</span> autoplayDelay(autoplayDelay: <span class="built_in">number</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>._autoplayDelay = autoplayDelay;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">get</span> autoplayDelay() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>._autoplayDelay || <span class="number">1000</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="结构指令还是组件？"><a href="#结构指令还是组件？" class="headerlink" title="结构指令还是组件？"></a>结构指令还是组件？</h2><p>​    使用结构指令的最大好处是提供了灵活的功能。</p>
+<p>​    结构指令将不会设想使用该组件的开发者如何做样式、动画或者如何展示元素。</p>
+<p>​    你可以直接去取得以下元素的值：</p>
+<ul>
+<li>使用指令的宿主元素。</li>
+<li>使用指令的子元素（比如按钮、图片等等）。</li>
+</ul>
+<p>​        这意味你可以随意给图片元素的<code>alt</code>或<code>title</code>属性赋值。你也可以给图片元素赋予其他和轮播指令不相干的指令。</p>
+<p>​    你也可以按照你的想法随意放置前一个和后一个的按钮。甚至可以隐藏起按钮，而让其只能自动播放（最好不要这样做）。</p>
+<p>​    为了更好地论证这点，这里有几个使用轮播组件创建的不同的组件。</p>
+<ol>
+<li><p>只自动轮播</p>
+<p><img src="/Users/zhaorenjie/Documents/img/constructor_directive_8.gif" alt="constructor_directive_8"></p>
+</li>
+<li><p>按钮切换轮播</p>
+<p><img src="/Users/zhaorenjie/Documents/img/constructor_directive_9.gif" alt="constructor_directive_9"></p>
+</li>
+<li><p>图文并茂的轮播</p>
+<p><img src="/Users/zhaorenjie/Documents/img/constructor_directive_10.gif" alt="constructor_directive_10"></p>
+</li>
+</ol>
+<p>可以在以下链接中找到<code>carousel direcitve</code>和<code>carousel component</code>的源代码：</p>
+<ul>
+<li><a href="https://github.com/zetsnotdead/ng-carousel" target="_blank" rel="noopener">GitHub</a> repository</li>
+<li><a href="https://stackblitz.com/github/zetsnotdead/ng-carousel" target="_blank" rel="noopener">Live demo</a></li>
+</ul>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>​    如果在结构中指令不想传递上下文变量，只是想单纯地传递<code>@Input</code>变量，是无法省略<code>let variable</code>变量的的，按照本文的例子，只能这样：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div *carousel=<span class="string">"let url autoplay 'on' autoplayDelay 1000"</span></span><br></pre></td></tr></table></figure>
+<p>无法省略<code>let url</code>前缀。</p>
+<p>​    </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/15/viewContainerRef/" rel="next" title="探索如何使用ViewContainerRef操作Dom节点">
+                <i class="fa fa-chevron-left"></i> 探索如何使用ViewContainerRef操作Dom节点
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/10/原型继承是如何实现的/" rel="prev" title="原型继承是如何实现的">
+                原型继承是如何实现的 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="食饼筒" />
+            
+              <p class="site-author-name" itemprop="name">食饼筒</p>
+              <p class="site-description motion-element" itemprop="description">do better</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#理解Angular结构指令"><span class="nav-number">1.</span> <span class="nav-text">理解Angular结构指令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#模板指令微语法"><span class="nav-number">1.1.</span> <span class="nav-text">模板指令微语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#领域专用术语（DSL）"><span class="nav-number">1.2.</span> <span class="nav-text">领域专用术语（DSL）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#上下文变量"><span class="nav-number">1.3.</span> <span class="nav-text">上下文变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">1.4.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动播放"><span class="nav-number">1.5.</span> <span class="nav-text">自动播放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结构指令还是组件？"><span class="nav-number">1.6.</span> <span class="nav-text">结构指令还是组件？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充"><span class="nav-number">1.7.</span> <span class="nav-text">补充</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">食饼筒</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+<div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共9.3k字</span>
+</div>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
