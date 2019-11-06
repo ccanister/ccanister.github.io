@@ -86,14 +86,14 @@
 <meta property="og:site_name" content="稠鱼烧才好吃">
 <meta property="og:description" content="最近在用rxjs时候对于throttleTime和debounceTime这两个操作符很困惑，用起来就是瞎蒙，哪个看起来对就用哪个。之前就有接触过throttle，用于控制input输入框输入频率。于是特地去搜索一哈节流是啥玩意。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Documents/blog/source/images/throttle/nothing.gif">
-<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Documents/blog/source/images/throttle/throttle.gif">
-<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Documents/blog/source/images/throttle/debounce.gif">
-<meta property="og:updated_time" content="2019-11-06T09:19:10.461Z">
+<meta property="og:image" content="http://yoursite.com/2019/11/06/images/throttle/nothing.gif">
+<meta property="og:image" content="http://yoursite.com/2019/11/06/images/throttle/throttle.gif">
+<meta property="og:image" content="http://yoursite.com/2019/11/06/images/throttle/debounce.gif">
+<meta property="og:updated_time" content="2019-11-06T09:23:57.076Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="防抖和节流">
 <meta name="twitter:description" content="最近在用rxjs时候对于throttleTime和debounceTime这两个操作符很困惑，用起来就是瞎蒙，哪个看起来对就用哪个。之前就有接触过throttle，用于控制input输入框输入频率。于是特地去搜索一哈节流是啥玩意。">
-<meta name="twitter:image" content="http://yoursite.com/Users/zhaorenjie/Documents/blog/source/images/throttle/nothing.gif">
+<meta name="twitter:image" content="http://yoursite.com/2019/11/06/images/throttle/nothing.gif">
 
 
 
@@ -355,11 +355,11 @@
 <li>在页面上拖组件时为了得到更好的性能</li>
 </ol>
 <h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a><code>Demo</code></h2><p>下面是分别是不加任何修饰的滚屏，加了节流的的滚屏以及加了防抖的滚屏  </p>
-<p><img src="/Users/zhaorenjie/Documents/blog/source/images/throttle/nothing.gif" alt="nothing"></p>
+<p><img src="../images/throttle/nothing.gif" alt="nothing"></p>
 <p>​                                                                                        [Nothing]</p>
-<p><img src="/Users/zhaorenjie/Documents/blog/source/images/throttle/throttle.gif" alt="throttle"></p>
+<p><img src="../images/throttle/throttle.gif" alt="throttle"></p>
 <p>​                                            [Throttled]</p>
-<p><img src="/Users/zhaorenjie/Documents/blog/source/images/throttle/debounce.gif" alt="debounce"></p>
+<p><img src="../images/throttle/debounce.gif" alt="debounce"></p>
 <p>​                                        [Debounced]</p>
 <p>可以明显看出，不加任何修饰的时候，随着翻滚的速度计数是很快累计的；使用了节流的时候，每隔一段时间后才会计数；而防抖则是滚动后停下来再去计数。</p>
 <h2 id="自己来实现吧"><a href="#自己来实现吧" class="headerlink" title="自己来实现吧"></a>自己来实现吧</h2><p>明白了定义和适用场景后，撸起袖子来造轮子吧。</p>
