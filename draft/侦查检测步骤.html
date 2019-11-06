@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="侦查检测步骤​       翻译 ​        如果你像我一样想对Angular的变化检测有全面的了解，由于网上灭有太多有用的信息，你必须深究源码。大部分文章只是提交到每个组件有自己的 变化检测器负责检测组件，但是他们大部分时候关注于不变的例子和变化检测策略。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="侦查检测步骤">
+<meta property="og:url" content="http://yoursite.com/draft/侦查检测步骤.html">
+<meta property="og:site_name" content="稠鱼烧才好吃">
+<meta property="og:description" content="侦查检测步骤​       翻译 ​        如果你像我一样想对Angular的变化检测有全面的了解，由于网上灭有太多有用的信息，你必须深究源码。大部分文章只是提交到每个组件有自己的 变化检测器负责检测组件，但是他们大部分时候关注于不变的例子和变化检测策略。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-11-06T08:30:23.007Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="侦查检测步骤">
+<meta name="twitter:description" content="侦查检测步骤​       翻译 ​        如果你像我一样想对Angular的变化检测有全面的了解，由于网上灭有太多有用的信息，你必须深究源码。大部分文章只是提交到每个组件有自己的 变化检测器负责检测组件，但是他们大部分时候关注于不变的例子和变化检测策略。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/draft/侦查检测步骤.html"/>
+
+
+
+
+
+  <title>侦查检测步骤 | 稠鱼烧才好吃</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">稠鱼烧才好吃</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+    
+    
+    <div class="post-block page">
+      <header class="post-header">
+
+	<h1 class="post-title" itemprop="name headline">侦查检测步骤</h1>
+
+
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+        
+        
+          <h1 id="侦查检测步骤"><a href="#侦查检测步骤" class="headerlink" title="侦查检测步骤"></a>侦查检测步骤</h1><p>​       <a href="https://blog.angularindepth.com/everything-you-need-to-know-about-change-detection-in-angular-8006c51d206f" target="_blank" rel="noopener">翻译</a></p>
+<p>​        如果你像我一样想对<code>Angular</code>的变化检测有全面的了解，由于网上灭有太多有用的信息，你必须深究源码。大部分文章只是提交到每个组件有自己的 变化检测器负责检测组件，但是他们大部分时候关注于不变的例子和变化检测策略。<br><a id="more"></a><br>这篇文章将会让我们理解为什么使用不变的例子和如如何改变变化检测策略影响检查。当然，你也会从这篇文章中想到不同的情景用来优化性能。</p>
+<p>​       这篇文章包括两部分，第一部分探讨大量技术细节，包含了源码的链接。它解释了在底层变化检测工作原理。这些内容基于<code>Angular 4.0.1</code>。这和早期的<code>2.4.1</code>的变化检测原理是不一样的。如果对这方面也感兴趣，可以阅读这篇<a href="http://stackoverflow.com/a/42807309/2545680" target="_blank" rel="noopener">答案</a>。第二部分展示了如何在应用中改变检测机制，这部分内容对于<code>4.0</code>和<code>2.4</code>版本均适用。</p>
+<h2 id="核心概念-视图"><a href="#核心概念-视图" class="headerlink" title="核心概念-视图"></a>核心概念-视图</h2><p>​       在教程中提到过，<code>Angular</code>应用是一颗组件数。但是，在底层<code>Angular</code>使用了更低一级的抽象-<code>view</code>。<code>view</code>和<code>component</code>有着直接的关系：每个<code>view</code>关联着一个<code>component</code>，反之亦然。<code>view</code>中有个<code>componet</code>变量，其中持有其相关联的组件类实例。所有操作，比如检查属性、<code>DOM</code>更新都是在<code>view</code>上操作的。所以更专业的说法是，<code>Angular</code>应用是<code>view</code>树，而组件可以看做是<code>view</code>更高级的抽象。在源码中，<code>view</code>是这么描述的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">A View is a fundamental building block of the application UI. It is the smallest grouping of Elements which are created and destroyed together.</span><br><span class="line"></span><br><span class="line">如果应用UI可以看做建筑，那么view就是其中的砖头。它们可以作为一群一起被创建或者销毁的元素。</span><br><span class="line"></span><br><span class="line">Properties of elements in a View can change, but the structure (number and order) of elements in a View cannot. Changing the structure of Elements can only be done by inserting, moving or removing nested Views via a ViewContainerRef. Each View can contain many View Containers.</span><br><span class="line">view中的属性可以改变，但是结构(比如顺序、数量)是无法改变的。想要改变其结构，只能通过ViewContainerRef变量插入、移动和删除元素。每个view可以拥有多个view container。</span><br></pre></td></tr></table></figure>
+<p>​       在这篇文章中，我会交替使用组件 <code>view</code>和组件这两个概念。</p>
+<p>​       每个<code>view</code>都可以通过<code>nodes</code>属性链接到子<code>view</code>，因此可以直接操作<code>view</code>。</p>
+<h2 id="view状态"><a href="#view状态" class="headerlink" title="view状态"></a><code>view</code>状态</h2><p>​        每个<code>view</code>都会有状态，<code>Angular</code>会根据状态判断检测或忽略<code>view</code>和其子<code>view</code>。<code>view</code>的状态比较多，但和本文相关的只有以下几个状态：</p>
+<pre><code>1. FirstCheck
+2. ChecksEnabled
+3. Errored
+4. Destoryed
+</code></pre><p>​       如果<code>ChecksEnabled</code>是<code>false</code>或者视图处于<code>Errored</code>或者<code>Destoryed</code>状态，那么该视图和子视图都会跳过视图检测。默认情况下，所以视图会被初始化为<code>ChecksEnabled</code>状态，除非被设置为<code>ChangeDetectionStrategy.OnPush</code>。这将会进行详细的讨论。状态可以同事拥有，比如视图可以同时被设置为<code>FirstCheck</code>和<code>ChecksEnabled</code>。</p>
+<p>​       <code>Angular</code>有较高等级抽象方法去操作视图。我曾写过这篇<a href="https://blog.angularindepth.com/exploring-angular-dom-abstractions-80b3ebcfc02" target="_blank" rel="noopener">文章</a>谈到过。其中有个概念是<code>ViewRef</code>。它包装了底层视图组件，以及有操作方法<code>detectChanges</code>。当有异步事件发生时，<code>Angular</code>在最顶层抽象上<code>ViewRef</code>上触发变化检测。当它检测完自身组件后，会再去检测子组件。</p>
+<p>​       你可以使用<code>ChangeDetectorRef</code>已用将<code>viewRef</code>注入到组件的构造器中。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> AppComponent &#123;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">cd: ChangeDetectorRef</span>) &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+<p>​       查看其类定义:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">declare</span> <span class="keyword">abstract</span> <span class="keyword">class</span> ChangeDetectorRef &#123;</span><br><span class="line">    <span class="keyword">abstract</span> checkNoChanges(): <span class="built_in">void</span>;</span><br><span class="line">    <span class="keyword">abstract</span> detach(): <span class="built_in">void</span>;</span><br><span class="line">    <span class="keyword">abstract</span> detectChanges(): <span class="built_in">void</span>;</span><br><span class="line">    <span class="keyword">abstract</span> markForCheck(): <span class="built_in">void</span>;</span><br><span class="line">    <span class="keyword">abstract</span> reattach(): <span class="built_in">void</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">abstract</span> <span class="keyword">class</span> ViewRef <span class="keyword">extends</span> ChangeDetectorRef &#123;</span><br><span class="line">   ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="变化检测策略"><a href="#变化检测策略" class="headerlink" title="变化检测策略"></a>变化检测策略</h2><p>​       视图的变化检测的主要逻辑在<code>checkAndUpdateView</code>方法中。大部分功能是对其子组件视图操作。这个方法从主组件中开始递归调用。这意味着当地归属展开后，子视图会成为父节点在方法下次调用时。当方法被调用后，视图会按照以下顺序更新检查：</p>
+<pre><code>1. 如果`view`是第一次检查，设置`ViewState.firstCheck`为`true`，如果之前已经检查过，那么设置为`false`。
+</code></pre><ol start="2">
+<li><p>检查和更新子组件和指令的<code>input</code>属性</p>
+</li>
+<li><p>更新子视图更新检测状态（部分子组件检测策略改变）</p>
+</li>
+<li><p>对视图的组件进行更新检测（重复列表操作）</p>
+</li>
+<li><p>如果子组件绑定了<code>OnChanges</code>方法，那么调用它。</p>
+</li>
+<li><p>子组件调用<code>OnInit</code>和<code>ngDoCheck</code>方法（<code>OnInit</code>方法只在初始化时候调用）</p>
+</li>
+<li><p>？？</p>
+</li>
+<li><p>子组件调用<code>AfterContentInit</code>和<code>AfterContentChecked</code>生命周期方法（<code>AfterContentInit</code>方法只在第一次检查时调用）</p>
+</li>
+<li><p>如果当前视图中，有插入的视图组件发生变化，就去更新。</p>
+</li>
+<li><p>视图的子组件更新检测（重复列表）</p>
+</li>
+<li><p>？？</p>
+</li>
+<li><p>子组件实例调用<code>AfterViewInit</code>和<code>AfterViewChecked</code>生命周期方法（<code>AfterViewInit</code>只在对此检查时调用）</p>
+</li>
+<li><p>当前视图禁止检查（部分检测策略改变）</p>
+</li>
+</ol>
+<p>这里只有部分需要关注。</p>
+<p>​        第一，子组件的<code>OnChanges</code>方法会在子视图检查前调用，即使子视图的更新检测设置成跳过也会调用。这点是非常重要，在第二节中我们会看到如何运用这个知识。</p>
+<p>​       第二，当视图被检查时候，视图中<code>DOM</code>的更新也是作为更新检测原理一部分。这意味这如果组件不被检查，即使组件属性在模板中改变，<code>DOM</code>也不会更新。第一次检查前模板就会渲染完成。我提及的<code>DOM</code>更新指的是插值更新。所以当有如下模板<code>&lt;span&gt;some &lt;/span&gt;</code>时，第一次检查前<code>span</code>标签已经渲染好了，检查时候，只有<code></code>会重新被渲染。</p>
+<p>​       另一件有趣的事是在更新检测时候，子组件的状态可以被改变。我之前提过，所有组件默认初始化为<code>ChecksEnabled</code>状态。但是如果组件使用了<code>OnPush</code>策略，在第一次检查后，更新检测会被禁止。（上述第9步）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (view.def.flags &amp; ViewFlag.OnPush) &#123;</span><br><span class="line">    view.state &amp;= ~ViewState.ChecksEnabled;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​      这意味着当更新检测时候，该组件和子组件的检查都会被忽略。文档中关于<code>OnPush</code>的策略解释为组件只有在绑定的值变化时候才会更新。</p>
+
+        
+      </div>
+      
+      
+      
+    </div>
+    
+    
+    
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="食饼筒" />
+            
+              <p class="site-author-name" itemprop="name">食饼筒</p>
+              <p class="site-description motion-element" itemprop="description">do better</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#侦查检测步骤"><span class="nav-number">1.</span> <span class="nav-text">侦查检测步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#核心概念-视图"><span class="nav-number">1.1.</span> <span class="nav-text">核心概念-视图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#view状态"><span class="nav-number">1.2.</span> <span class="nav-text">view状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#变化检测策略"><span class="nav-number">1.3.</span> <span class="nav-text">变化检测策略</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">食饼筒</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+<div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共15.5k字</span>
+</div>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

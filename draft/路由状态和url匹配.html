@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="路由状态和url匹配这篇文章的主要目标是为了更好地了解当路由接受到新的url开始到其匹配结束后这段时间内发生的事情。我们将从以下几个方面着手：  url结构 url重定向 匹配路由配置对象 路由状态、激活的路由以及路由快照  状态树路由将会把应用路由路径看做路由状态树，它们会被定义为路由配置对象： 1&amp;#123;path: &apos;...&apos;, component: ... &amp;#125; 在应用中通过导入">
+<meta property="og:type" content="website">
+<meta property="og:title" content="稠鱼烧才好吃">
+<meta property="og:url" content="http://yoursite.com/draft/路由状态和url匹配.html">
+<meta property="og:site_name" content="稠鱼烧才好吃">
+<meta property="og:description" content="路由状态和url匹配这篇文章的主要目标是为了更好地了解当路由接受到新的url开始到其匹配结束后这段时间内发生的事情。我们将从以下几个方面着手：  url结构 url重定向 匹配路由配置对象 路由状态、激活的路由以及路由快照  状态树路由将会把应用路由路径看做路由状态树，它们会被定义为路由配置对象： 1&amp;#123;path: &apos;...&apos;, component: ... &amp;#125; 在应用中通过导入">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Downloads/router/routes.png">
+<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Downloads/router/route-url.png">
+<meta property="og:image" content="http://yoursite.com/Users/zhaorenjie/Downloads/router/route-utl-tree.png">
+<meta property="og:updated_time" content="2019-03-12T12:33:07.664Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="稠鱼烧才好吃">
+<meta name="twitter:description" content="路由状态和url匹配这篇文章的主要目标是为了更好地了解当路由接受到新的url开始到其匹配结束后这段时间内发生的事情。我们将从以下几个方面着手：  url结构 url重定向 匹配路由配置对象 路由状态、激活的路由以及路由快照  状态树路由将会把应用路由路径看做路由状态树，它们会被定义为路由配置对象： 1&amp;#123;path: &apos;...&apos;, component: ... &amp;#125; 在应用中通过导入">
+<meta name="twitter:image" content="http://yoursite.com/Users/zhaorenjie/Downloads/router/routes.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/draft/路由状态和url匹配.html"/>
+
+
+
+
+
+  <title> | 稠鱼烧才好吃</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">稠鱼烧才好吃</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+    
+    
+    <div class="post-block page">
+      <header class="post-header">
+
+	<h1 class="post-title" itemprop="name headline"></h1>
+
+
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+        
+        
+          <h1 id="路由状态和url匹配"><a href="#路由状态和url匹配" class="headerlink" title="路由状态和url匹配"></a>路由状态和<code>url</code>匹配</h1><p>这篇文章的主要目标是为了更好地了解当路由接受到新的<code>url</code>开始到其匹配结束后这段时间内发生的事情。我们将从以下几个方面着手：</p>
+<ol>
+<li><code>url</code>结构</li>
+<li><code>url</code>重定向</li>
+<li>匹配路由配置对象</li>
+<li>路由状态、激活的路由以及路由快照</li>
+</ol>
+<h2 id="状态树"><a href="#状态树" class="headerlink" title="状态树"></a>状态树</h2><p>路由将会把应用路由路径看做路由状态树，它们会被定义为路由配置对象：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;path: <span class="string">'...'</span>, component: ... &#125;</span><br></pre></td></tr></table></figure>
+<p>在应用中通过导入<code>RouterModule</code>以声明方式可以指定路由配置对象，并以数组的形式传入<code>RouterModule.forRoot()</code>方法。考虑下面示例应用的的路由配置，其路由对象被定义在<code>ROUTES</code>数组中：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ROUTES: Route[] = [</span><br><span class="line">  &#123; path: <span class="string">'home'</span>, component: HomeComponent &#125;,</span><br><span class="line">  &#123; path: <span class="string">''</span>, redirectTo: <span class="string">'home'</span>, pathMatch: <span class="string">'full'</span> &#125;,</span><br><span class="line">  &#123; path: <span class="string">'redirectMe'</span>, redirectTo: <span class="string">'home'</span>, pathMatch: <span class="string">'full'</span> &#125;,</span><br><span class="line">  &#123; path: <span class="string">'users/:userid'</span>, component: UserComponent, </span><br><span class="line">    children: [</span><br><span class="line">      &#123; path: <span class="string">'notes'</span>, component: NotesComponent &#125;,</span><br><span class="line">      &#123; path: <span class="string">'notes/:noteid'</span>, component: NoteComponent&#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123; path: <span class="string">'secondary1'</span>, outlet: <span class="string">'sidebar'</span>, component: Secondary1Component &#125;,</span><br><span class="line">  &#123; path: <span class="string">'secondary2'</span>, outlet: <span class="string">'sidebar'</span>, component: Secondary2Component &#125;,</span><br><span class="line">  &#123; path: <span class="string">'**'</span>, component: PageNotFoundComponent &#125;,</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+<p><code>Route</code>对象定义了应用中不同可路由状态（组件、重定向等）以及<code>url</code>关系。<code>Route</code>对象结构很简单，大部分时候，只需要<code>path</code>去匹配<code>url</code>路径，以及匹配成功时需要加载的<code>component</code>。我们稍后可以看到，<code>&lt;router-outlet&gt;</code>指令可以渲染需要加载的组件。其中<code>&lt;router-outlet&gt;</code>也可以指定名字，例如<code>&lt;router-outlet name=&quot;sidebar&quot;&gt;</code>，这也叫做第二路由。如果你想知道更多关于二次路由细节可以参考<a href="https://blog.angularindepth.com/angular-router-series-secondary-outlets-primer-139206595e2" target="_blank" rel="noopener">这篇文章</a>。</p>
+<p>在文章的最后，我们会理解以下图示例子，当<code>url</code>开始被接受以及在<code>ROUTES</code>数组中匹配过程。</p>
+<p><img src="/Users/zhaorenjie/Downloads/router/routes.png" alt="routes"></p>
+<p>我们首先来了解路由内部如何处理<code>url</code>。</p>
+<h2 id="url和UrlSegmentGroups"><a href="#url和UrlSegmentGroups" class="headerlink" title="url和UrlSegmentGroups"></a><code>url</code>和<code>UrlSegmentGroups</code></h2><p>首先我们需要知道<code>url</code>是由哪些部分组成的，以及在路由内部他们会用什么表示。</p>
+<p>思考以下<code>url</code></p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/users/<span class="number">1</span>/notes/<span class="number">42</span></span><br></pre></td></tr></table></figure>
+<p>它由4个片段组成：<code>users</code>，<code>1</code>，<code>notes</code>，<code>42</code>。它没有包含其他参数，也没有第二路由。</p>
+<p>当给了一个<code>url</code>时，我们会认为路由只是单纯得把它看做字符串存储。但是<code>url</code>可以看做是路由状态序列化之后结果，可能很复杂，所以路由内部需要更复杂的结构来代表<code>url</code>。</p>
+<p>比如再看以下的<code>url</code>，它包含了第二路由、查询参数和片段（<code>fragment</code>)。</p>
+<p><img src="/Users/zhaorenjie/Downloads/router/route-url.png" alt="route-url"></p>
+<p>我们可以使用路由服务来划分这个<code>url</code>：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> url = <span class="string">'/users/1/notes/42(sidebar:secondary1)?lang=en#line99'</span>;</span><br><span class="line"><span class="keyword">const</span> tree: UrlTree = <span class="keyword">this</span>.router.parseUrl(url); <span class="comment">// '/users/1/notes/42(sidebar:secondary1)?lang=en#line99'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> fragment = tree.fragment;         <span class="comment">// line99</span></span><br><span class="line"><span class="keyword">const</span> queryParams = tree.queryParams;   <span class="comment">// lang=en</span></span><br><span class="line"><span class="keyword">const</span> primary: UrlSegmentGroup = tree.root.children[PRIMARY_OUTLET];  <span class="comment">// gets the UrlSegmentGroup for the primary router outlet</span></span><br><span class="line"><span class="keyword">const</span> sidebar: UrlSegmentGroup = tree.root.children[<span class="string">'sidebar'</span>];       <span class="comment">// gets the UrlSegmentGroup for the secondary router outlet (sidebar)</span></span><br><span class="line"><span class="keyword">const</span> primarySegments: UrlSegment[] = primary.segments;   <span class="comment">// returns all UrlSegments for the primary outlet. ['users','1','notes','42']</span></span><br><span class="line"><span class="keyword">const</span> sidebarSegments: UrlSegment[] = sidebar.segments;   <span class="comment">// returns all UrlSegments for the secondary outlet. ['secondary1']</span></span><br></pre></td></tr></table></figure>
+<p>我建议你可以在<a href="https://stackblitz.com/edit/angular-router-url-segment" target="_blank" rel="noopener">这里</a>做一下实验，来更好地了解<code>url</code>的组织。</p>
+<p>代码的第2行调用了<code>router.parseUrl(url)</code>方法，它将url字符串转化成以下树结构。</p>
+<p><img src="/Users/zhaorenjie/Downloads/router/route-utl-tree.png" alt="route-utl-tree"></p>
+<ol>
+<li>URL字符串被转化成<code>UrlTree</code>对象。</li>
+<li>该树的内部节点（即拥有<code>UrlSegements</code>子节点的）被称作<code>UrlSegmentGroups</code>。这些通常和特定的路由出口相关联，例如上述例子的<code>primary</code>和<code>sidebar</code>。</li>
+<li>在<code>url</code>的两个斜杠中间部分被视为叶子节点，也称作<code>UrlSegment</code>。比如<code>/users/1/notes/42</code>就有4个片段，<code>users</code> <code>1</code> <code>notes</code>以及<code>42</code>。这些会在<code>ROUTES</code>数组中的路由配置<code>path</code>属性相匹配。<code>UrlSegments</code>也可以包含矩阵参数，由<code>;</code>分隔符隔开，例如<code>/users;name=nate;type=admin/</code>，就有<code>name</code>和<code>type</code>两个矩阵参数。</li>
+<li></li>
+</ol>
+
+        
+      </div>
+      
+      
+      
+    </div>
+    
+    
+    
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="食饼筒" />
+            
+              <p class="site-author-name" itemprop="name">食饼筒</p>
+              <p class="site-description motion-element" itemprop="description">do better</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#路由状态和url匹配"><span class="nav-number">1.</span> <span class="nav-text">路由状态和url匹配</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#状态树"><span class="nav-number">1.1.</span> <span class="nav-text">状态树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#url和UrlSegmentGroups"><span class="nav-number">1.2.</span> <span class="nav-text">url和UrlSegmentGroups</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">食饼筒</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+<div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共15.5k字</span>
+</div>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
