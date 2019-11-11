@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="基本Observable之前看过Obsevable源码，想着自己也实现一个，就决定做一个比较简单的Observable好了。 首先要明白rxjs就是普通的回调，没有涉及到啥观察者模式。Observable就是数据源，产生数据时候就会调用观察者Observer的next方法，如果出错就会调用的Observer的error方法，所有数据产生完毕就会调用Observer的complete方法。而与Pro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="动手写一个Observable">
+<meta property="og:url" content="http://yoursite.com/2019/11/11/动手写一个Observable/index.html">
+<meta property="og:site_name" content="稠鱼烧才好吃">
+<meta property="og:description" content="基本Observable之前看过Obsevable源码，想着自己也实现一个，就决定做一个比较简单的Observable好了。 首先要明白rxjs就是普通的回调，没有涉及到啥观察者模式。Observable就是数据源，产生数据时候就会调用观察者Observer的next方法，如果出错就会调用的Observer的error方法，所有数据产生完毕就会调用Observer的complete方法。而与Pro">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-11-11T03:23:37.305Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="动手写一个Observable">
+<meta name="twitter:description" content="基本Observable之前看过Obsevable源码，想着自己也实现一个，就决定做一个比较简单的Observable好了。 首先要明白rxjs就是普通的回调，没有涉及到啥观察者模式。Observable就是数据源，产生数据时候就会调用观察者Observer的next方法，如果出错就会调用的Observer的error方法，所有数据产生完毕就会调用Observer的complete方法。而与Pro">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/11/动手写一个Observable/"/>
+
+
+
+
+
+  <title>动手写一个Observable | 稠鱼烧才好吃</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">稠鱼烧才好吃</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/11/动手写一个Observable/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="食饼筒">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="稠鱼烧才好吃">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">动手写一个Observable</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-11T11:15:19+08:00">
+                2019-11-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/rxjs/" itemprop="url" rel="index">
+                    <span itemprop="name">rxjs</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="基本Observable"><a href="#基本Observable" class="headerlink" title="基本Observable"></a>基本Observable</h2><p>之前看过Obsevable源码，想着自己也实现一个，就决定做一个比较简单的Observable好了。</p>
+<p>首先要明白rxjs就是普通的回调，没有涉及到啥观察者模式。Observable就是数据源，产生数据时候就会调用观察者Observer的next方法，如果出错就会调用的Observer的error方法，所有数据产生完毕就会调用Observer的complete方法。而与Promise不同的是rxjs是惰性产生数据，只有调用了subscribe方法后才会产生数据，而subscribe方法也可以返回一个具有unsubscribe方法的对象，该方法主要是在取消订阅时候清理资源，最常见的就是clearInterval方法。</p>
+<a id="more"></a>
+<p>依据以上理论，我们可以有Observer、Observable和Subsciption几个类。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">interface</span> Observer&lt;T&gt; &#123;</span><br><span class="line">  next?:  <span class="function">(<span class="params">v: T</span>) =&gt;</span> <span class="built_in">void</span>;</span><br><span class="line">  error?:  <span class="function">(<span class="params">e: <span class="built_in">any</span></span>) =&gt;</span> <span class="built_in">void</span>;</span><br><span class="line">  complete?:  <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">void</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Observer其实可以看做具有next、error和complete三个方法的接口。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Subscription &#123;</span><br><span class="line">  closed = <span class="literal">false</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"><span class="keyword">private</span> _unsubscribe: <span class="built_in">void</span> | <span class="built_in">Function</span></span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  unsubscribe() &#123;</span><br><span class="line">    <span class="comment">// 防止反复调用</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.closed) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.closed = <span class="literal">false</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>._unsubscribe) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>._unsubscribe();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Subscription类可以传入方法，也可以不传入任何对象。因为我们可能并不一定需要清理资源。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Observer &#125; <span class="keyword">from</span> <span class="string">"./Observer"</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; Subscription &#125; <span class="keyword">from</span> <span class="string">"./Subscription"</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Observable&lt;T&gt; &#123;</span><br><span class="line">  <span class="keyword">static</span> create&lt;T&gt;<span class="function">(<span class="params">_subscriber: (<span class="params">observer: Observer&lt;T&gt;</span>) =&gt; <span class="built_in">void</span> | <span class="built_in">Function</span></span>) &#123;</span></span><br><span class="line"><span class="function">    <span class="params">return</span> <span class="params">new</span> <span class="params">Observable</span>(<span class="params">_subscriber</span>);</span></span><br><span class="line"><span class="function">  &#125;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">  <span class="params">constructor</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">private</span> _subscriber: (<span class="params">observer: Observer&lt;T&gt;</span>) =&gt; <span class="built_in">void</span> | <span class="built_in">Function</span></span></span></span><br><span class="line"><span class="function"><span class="params">  </span>) &#123;&#125;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">  <span class="params">subscribe</span>(<span class="params">obsevrer: Observer&lt;T&gt;</span>): <span class="params">Subscription</span> &#123;</span></span><br><span class="line"><span class="function">    <span class="params">return</span> <span class="params">new</span> <span class="params">Subscription</span>(<span class="params"><span class="keyword">this</span>._subscriber(<span class="params">obsevrer</span>)</span>);</span></span><br><span class="line"><span class="function">  &#125;</span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>Observable中我们保存了源数据_subscriber，在订阅的时候再将observer观察者传入，这时候产生数据时候就会去调用observer中的方法。可以看出每次订阅都是一个独立的执行环境，这也是所谓的<code>cold Observable</code>。</p>
+<p>我们执行下下面的例子：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> observable = Observable.create(<span class="function"><span class="params">observer</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> id = setInterval(<span class="function"><span class="params">()</span> =&gt;</span> observer.next(<span class="number">1</span>), <span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">window</span>.clearInterval(id);</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> observer = &#123;</span><br><span class="line">  next: <span class="built_in">console</span>.log</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> subscription = observable.subscribe(observer);</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  subscription.unsubscribe();	<span class="comment">// 输出5个1之后，不再输出</span></span><br><span class="line">&#125;, <span class="number">5000</span>);</span><br></pre></td></tr></table></figure>
+<p>现在我们就已经完成了一个很简单的Observable，但仍然存在两个问题：</p>
+<ul>
+<li><p>在调用complete方法后，我们再去执行observer.next(1)不应该能产生该数据。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Observable.create(<span class="function"><span class="params">observer</span> =&gt;</span> &#123;</span><br><span class="line">  observer.next(<span class="number">1</span>);</span><br><span class="line">  observer.next(<span class="number">2</span>);</span><br><span class="line">  observer.next(<span class="number">3</span>);</span><br><span class="line">	observer.complete();</span><br><span class="line">  observer.next(<span class="string">"still work"</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 将会输出 1 2 3 still work 这是不对的</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>传入subscribe方法的参数问题，可以有：</p>
+<ul>
+<li>单独的方法，将会被看做next方法</li>
+<li>observer对象</li>
+<li>subscription对象</li>
+</ul>
+</li>
+</ul>
+<p>以上两个问题，我们需要对其修正。另附第一个<a href="https://stackblitz.com/edit/angular-ptnrb6?file=src%2Fapp%2Fapp.component.ts" target="_blank" rel="noopener">demo</a>的例子。</p>
+<h2 id="Subscriber类的衍生"><a href="#Subscriber类的衍生" class="headerlink" title="Subscriber类的衍生"></a>Subscriber类的衍生</h2><p>解决以上两个问题其实不难。</p>
+<ul>
+<li><p>第一个问题，如果是调用了complete或者next方法后，就重置一下标志位，在推送数据前，查看标志位是否重置即可。</p>
+</li>
+<li><p>第二个问题，前两个参数是很好解决的，只要对传进来的参数解析就可以了。而subscription对象就不太一样了，因为subscription对象本身是没有next等方法的，这说明我们有个类是同时继承了Subsciption类和实现Observer接口的，否则我们无法接受该参数，所以就有了Subscriber类。这个类中有destination属性，他是真正推送数据对象，我们通过解析传进的参数得到它。当subscribe方法收到传入第一个参数是Subscriber对象时候，就可以直接用该对象作为观察者去订阅数据源。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Observer &#125; <span class="keyword">from</span> <span class="string">"./Observer"</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; Subscription &#125; <span class="keyword">from</span> <span class="string">"./Subscription"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Subscriber&lt;T&gt; <span class="keyword">extends</span> Subscription <span class="keyword">implements</span> Observer&lt;T&gt; &#123;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 真正推送数据的对象</span></span><br><span class="line">  destination: Observer&lt;<span class="built_in">any</span>&gt;;</span><br><span class="line"></span><br><span class="line">  constructor(observerOrNext: Observer | ((v: T) =&gt; void), error?: (e?: any) =&gt; void,</span><br><span class="line">    complete?: <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">void</span>) &#123;</span><br><span class="line">    <span class="keyword">super</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> (<span class="built_in">arguments</span>.length) &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">        <span class="comment">// 空的observer</span></span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">if</span> (!observerOrNext) &#123;</span><br><span class="line">           <span class="comment">// 空的observer</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> observerOrNext === <span class="string">"object"</span>) &#123;</span><br><span class="line">            <span class="comment">// 如果传入的是observer对象</span></span><br><span class="line">        &#125;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="comment">// 如果传入了1-3个函数</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>写一个方法用来保证Observer每个方法都有值。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 空的observer</span></span><br><span class="line"><span class="keyword">const</span> emptySubscriber = &#123;</span><br><span class="line">  next: <span class="function"><span class="params">v</span> =&gt;</span> &#123;&#125;,</span><br><span class="line">  error: <span class="function"><span class="params">e</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">throw</span> e;</span><br><span class="line">  &#125;,</span><br><span class="line">  complete: <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Subscriber &#123;</span><br><span class="line">  constructor(observerOrNext: Observer | ((v: T) =&gt; void), error?: (e?: any) =&gt; void,</span><br><span class="line">    complete?: <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">void</span>) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;</span><br><span class="line">  safeSubscriber(</span><br><span class="line">    observerOrNext: Observer | <span class="function">(<span class="params">(<span class="params">v: T</span>) =&gt; <span class="built_in">void</span></span>),</span></span><br><span class="line"><span class="function">    <span class="params">error</span>?: (<span class="params">e?: <span class="built_in">any</span></span>) =&gt;</span> <span class="built_in">void</span>,</span><br><span class="line">    complete?: <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">void</span></span><br><span class="line">  ): Observer &#123;</span><br><span class="line">    <span class="keyword">let</span> next;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> observerOrNext === <span class="string">"function"</span>) &#123;</span><br><span class="line">      next = observerOrNext;</span><br><span class="line">      error = error || emptySubscriber.error;</span><br><span class="line">      complete = error || emptySubscriber.complete;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      next = observerOrNext.next || emptySubscriber.next;</span><br><span class="line">      error = observerOrNext.error || emptySubscriber.error;</span><br><span class="line">      complete = observerOrNext.complete || emptySubscriber.complete;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      next,</span><br><span class="line">      error,</span><br><span class="line">      complete</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就能保证我们的destination每个属性都为非空。，然后再把constructor完成。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Subscriber&lt;T&gt; <span class="keyword">extends</span> Subscription <span class="keyword">implements</span> Observer&lt;T&gt; &#123;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 真正推送数据的对象</span></span><br><span class="line">  destination: Observer&lt;<span class="built_in">any</span>&gt;;</span><br><span class="line"></span><br><span class="line">  constructor(observerOrNext: Observer | ((v: T) =&gt; void), error?: (e?: any) =&gt; void,</span><br><span class="line">    complete?: <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">void</span>) &#123;</span><br><span class="line">    <span class="keyword">super</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> (<span class="built_in">arguments</span>.length) &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">        <span class="comment">// 空的observer</span></span><br><span class="line">        <span class="keyword">this</span>.destination = emptySubscriber;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">if</span> (!observerOrNext) &#123;</span><br><span class="line">           <span class="comment">// 空的observer</span></span><br><span class="line">          <span class="keyword">this</span>.destination = emptySubscriber;</span><br><span class="line">        	<span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> observerOrNext === <span class="string">"object"</span>) &#123;</span><br><span class="line">          <span class="comment">// 如果传入的是observer对象</span></span><br><span class="line">          <span class="keyword">this</span>.destination = <span class="keyword">this</span>.safeSubscriber(observerOrNext);</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="comment">// 如果传入了1-3个函数</span></span><br><span class="line">        <span class="keyword">this</span>.destination = <span class="keyword">this</span>.safeSubscriber(observerOrNext, error, complete);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样我们保证传入的参数可以解析。然后我们再在Observable类中改造subscribe方法。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Observable &#123;</span><br><span class="line">	...</span><br><span class="line">	subscribe(</span><br><span class="line">    observerOrNext: Observer&lt;T&gt; | <span class="function">(<span class="params">(<span class="params">v: T</span>) =&gt; <span class="built_in">void</span></span>),</span></span><br><span class="line"><span class="function">    <span class="params">error</span>?: (<span class="params">e?: <span class="built_in">any</span></span>) =&gt;</span> <span class="built_in">void</span>,</span><br><span class="line">    complete?: <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">void</span></span><br><span class="line">  ): Subscription &#123;</span><br><span class="line">    <span class="keyword">const</span> subscriber = toSubscriber(observerOrNext, error, complete);</span><br><span class="line">    <span class="comment">// 现在subscriber就是一个subscription对象，所以他可以直接合并</span></span><br><span class="line">    subscriber.add(<span class="keyword">this</span>._subscribe(subscriber));</span><br><span class="line">    <span class="keyword">return</span> subscriber;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">toSubscriber</span>&lt;<span class="title">T</span>&gt;(<span class="params"></span></span></span><br><span class="line">    observerOrNext: Observer&lt;T&gt; | ((v: T) =&gt; void),</span><br><span class="line">    error?: <span class="function">(<span class="params">e?: <span class="built_in">any</span></span>) =&gt;</span> <span class="built_in">void</span>,</span><br><span class="line">    complete?: <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">void</span></span><br><span class="line">  ): Observer &#123;</span><br><span class="line">      <span class="comment">// 当传入的参数是Subscriber对象时候，我们直接返回。</span></span><br><span class="line">    <span class="keyword">if</span> (observerOrNext <span class="keyword">instanceof</span> Subscriber) &#123;</span><br><span class="line">      <span class="keyword">return</span> observerOrNext;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Subscriber(observerOrNext, error, complete);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样的话，我们还需要对Subscription类做些改造，添加add方法等。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Subscription &#123;</span><br><span class="line">  closed = <span class="literal">false</span>;</span><br><span class="line">  <span class="keyword">private</span> _subscriptions: Subscription[];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"><span class="keyword">private</span> _unsubscribe: <span class="built_in">void</span> | <span class="built_in">Function</span></span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  unsubscribe() &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.closed) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>._unsubscribe) &#123;</span><br><span class="line">      <span class="keyword">this</span>._unsubscribe();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 如果有子subscriptions也要相应的取消订阅</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>._subscriptions) &#123;</span><br><span class="line">      <span class="keyword">this</span>._subscriptions.forEach(<span class="function"><span class="params">sub</span> =&gt;</span> sub.unsubscribe());</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  add(teardown: <span class="built_in">void</span> | <span class="built_in">Function</span> | Subscription): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!teardown) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (teardown === <span class="keyword">this</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">let</span> sub = (&lt;Subscription&gt; teardown);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> (<span class="keyword">typeof</span> teardown) &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="string">'function'</span>:</span><br><span class="line">        sub = <span class="keyword">new</span> Subscription(&lt;<span class="function">(<span class="params">(<span class="params"></span>) =&gt; <span class="built_in">void</span></span>) &gt; <span class="params">teardown</span>);</span></span><br><span class="line"><span class="function">      <span class="params">case</span> '<span class="params">object</span>':</span></span><br><span class="line"><span class="function">        // 如果已经取消订阅了，那么不用合并</span></span><br><span class="line"><span class="function">        <span class="params">if</span> (<span class="params">sub.closed || <span class="keyword">typeof</span> sub.unsubscribe !== '<span class="keyword">function</span>'</span>) &#123;</span></span><br><span class="line"><span class="function">          <span class="params">break</span>;</span></span><br><span class="line"><span class="function">        &#125; <span class="params">else</span> <span class="params">if</span> (<span class="params"><span class="keyword">this</span>.closed</span>) &#123;</span></span><br><span class="line"><span class="function">          // 如果自己被取消了，那么需要合并的也要取消掉</span></span><br><span class="line"><span class="function">          <span class="params">sub</span>.<span class="params">unsubscribe</span><span class="params">()</span>;</span></span><br><span class="line"><span class="function">        &#125; <span class="params">else</span> &#123;</span></span><br><span class="line"><span class="function">          (<span class="params">(<span class="params">&lt;<span class="built_in">any</span>&gt; <span class="keyword">this</span></span>)._subscriptions || (<span class="params">(<span class="params">&lt;<span class="built_in">any</span>&gt; <span class="keyword">this</span></span>)._subscriptions = []</span>)</span>).<span class="params">push</span>(<span class="params">sub</span>);</span></span><br><span class="line"><span class="function">        &#125;</span></span><br><span class="line"><span class="function">        <span class="params">break</span>;</span></span><br><span class="line"><span class="function">      <span class="params">default</span>:</span></span><br><span class="line"><span class="function">        <span class="params">throw</span> <span class="params">new</span> <span class="params">Error</span>(<span class="params">'unrecognized teardown ' + teardown + ' added to Subscription.'</span>);</span></span><br><span class="line"><span class="function">    &#125;</span></span><br><span class="line"><span class="function">  &#125;</span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>  然后我们再来解决第一个问题，在调用next等方法前先来看标志位，如果是error和complete方法，还需要调用unsubscribe方法来结束流。</p>
+  <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Subscriber &#123;</span><br><span class="line">  stopped = <span class="literal">false</span>;</span><br><span class="line">  destination: Observer&lt;<span class="built_in">any</span>&gt;;</span><br><span class="line">  </span><br><span class="line">	<span class="keyword">constructor</span>(<span class="params"></span>) &#123;...&#125;</span><br><span class="line">  safeObserver() &#123;...&#125;</span><br><span class="line">  </span><br><span class="line">  next(v: T) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>.stoped) &#123;	<span class="comment">// 先判断是否停止过</span></span><br><span class="line">      <span class="keyword">this</span>.destination.next(v);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  error(e: <span class="built_in">any</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>.stoped) &#123;</span><br><span class="line">      <span class="keyword">this</span>.destination.error(e);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.unsubscribe();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  complete() &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>.stoped) &#123;</span><br><span class="line">      <span class="keyword">this</span>.destination.complete();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.unsubscribe();</span><br><span class="line">  &#125; </span><br><span class="line">                  </span><br><span class="line">  unsubscribe() &#123;</span><br><span class="line">    <span class="keyword">this</span>.stoped = <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">super</span>.unsubscribe();</span><br><span class="line">  &#125;</span><br><span class="line">            </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  到这里，我们解决了两个问题。我们来看两个demo。</p>
+<p>  demo1：</p>
+  <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Observable.create(<span class="function"><span class="params">observer</span> =&gt;</span> &#123;</span><br><span class="line">  observer.next(<span class="number">1</span>);</span><br><span class="line">  observer.next(<span class="number">2</span>);</span><br><span class="line">  observer.next(<span class="number">3</span>);</span><br><span class="line">  observer.complete();</span><br><span class="line">  observer.next(<span class="number">4</span>);</span><br><span class="line">&#125;).subscribe(<span class="built_in">console</span>.log);</span><br><span class="line"><span class="comment">// 输出1 2 3</span></span><br></pre></td></tr></table></figure>
+<p>  第一个demo我们在调用complete方法后，再次调用next方法，发现不再输出。</p>
+<p>  demo2：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">const ob1 = Observable.create(observer =&gt; &#123;</span><br><span class="line">  const id = setInterval(() =&gt; observer.next(1), 1000);</span><br><span class="line"></span><br><span class="line">  return function() &#123;</span><br><span class="line">  window.clearInterval(id);</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;);</span><br><span class="line">const ob2 = Observable.create(observer =&gt; &#123;</span><br><span class="line">  observer.next(1);</span><br><span class="line">  observer.next(2);</span><br><span class="line">  observer.next(3);</span><br><span class="line">  observer.complete();</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">const subscription = ob1.subscribe(console.log);</span><br><span class="line">setTimeout(() =&gt; &#123;</span><br><span class="line">	ob2.subscribe(subscription);</span><br><span class="line">&#125;, 5000);</span><br><span class="line">// 输出1 1 1 1 1 1 2 3</span><br></pre></td></tr></table></figure>
+<p>  在第二个demo中，我们将ob1订阅后的对象传入了ob2订阅中的参数。而ob2只有1，2，3三个数据源，推送完数据后，就会取消订阅。而这时候的subscription对象中有两个子subscription，一个是ob1返回的，另一个是ob2返回的，两个就都会被取消订阅。所以Ob1也不再产生数据。</p>
+<p>  以上代码和demo都附在<a href="https://stackblitz.com/edit/angular-asvyhw?file=src%2Fapp%2Frxjs-practice%2Fsubscription.ts" target="_blank" rel="noopener">这里</a>。</p>
+<h2 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h2><p>引入了操作符后，rxjs才感觉有如此多的花头。我当时看这里的代码也是卡了很久，首先让我们理清一些细节：</p>
+<ul>
+<li>每个operator都是返回了新的Observable。</li>
+<li>大部分的operator其实是包裹了Observer，在调用真正的Observer前对产出数据做一些处理。</li>
+<li>尽管operator返回了新的Observable，最终订阅的是最开始的数据源，所以要保留开始的数据源。</li>
+</ul>
+<p>我们先做一个map操作符。让我们一步一步来，首先如果存在operator，我们应该先让operator去做对应的事，所以要先改造subscribe方法。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Observable &#123;</span><br><span class="line">  operator: <span class="built_in">any</span>;</span><br><span class="line">  </span><br><span class="line">	subscribe(</span><br><span class="line">    observerOrNext: Observer&lt;T&gt; | <span class="function">(<span class="params">(<span class="params">v: T</span>) =&gt; <span class="built_in">void</span></span>),</span></span><br><span class="line"><span class="function">    <span class="params">error</span>?: (<span class="params">e?: <span class="built_in">any</span></span>) =&gt;</span> <span class="built_in">void</span>,</span><br><span class="line">    complete?: <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">void</span></span><br><span class="line">  ): Subscription &#123;</span><br><span class="line">    <span class="keyword">const</span> subscriber = toSubscriber(observerOrNext, error, complete);</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.operator) &#123;</span><br><span class="line">      <span class="comment">// 做点啥</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// 没有operator，那么直接订阅源数据。</span></span><br><span class="line">      subscriber.add(<span class="keyword">this</span>._subscribe(subscriber));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> subscriber;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后当我们现在拿到手的Observable是有map操作符，那么我们就应该将当前的数据源（需要订阅原始的数据源）和当前的observer传入（因为会包裹当前的Observer）。所有操作符就会有以下几步：</p>
+<ol>
+<li>建立新的Observable。</li>
+<li>保留当前的数据源，以便后续订阅。</li>
+<li>当订阅之前数据源时候，应包裹当前的Observer，其实就是将Subscriber对象中的destination设为当前Observer，这样在destination.next之前，我们就可以做一些处理。</li>
+</ol>
+<p>其中前两步是可以在Observbale中完成的。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">lift(operator: <span class="built_in">any</span>): Observable &#123;</span><br><span class="line">  <span class="keyword">const</span> observable = <span class="keyword">new</span> Observable();</span><br><span class="line">  observable.source = <span class="keyword">this</span>;	<span class="comment">// 保留当前的Observable;</span></span><br><span class="line">  observable.operator = operator;</span><br><span class="line">  <span class="keyword">return</span> observable;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过source这个属性我们保留了当前的Observable，我们完成了前两步。</p>
+<p>然后我们思考第三步，是在订阅之前数据源的操作，因为需要包裹当前的Observer，所以明显需要两个参数，所以我们可以定义Operator操作符：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">interface</span> Operator&lt;T&gt; &#123;</span><br><span class="line">	call(subscriber: Subscriber&lt;T&gt;, source: Observable&lt;<span class="built_in">any</span>&gt;): Subscription;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以在订阅的时候，operator就可以调用该方法。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">subscribe(</span><br><span class="line">    observerOrNext: Observer&lt;T&gt; | <span class="function">(<span class="params">(<span class="params">v: T</span>) =&gt; <span class="built_in">void</span></span>),</span></span><br><span class="line"><span class="function">    <span class="params">error</span>?: (<span class="params">e?: <span class="built_in">any</span></span>) =&gt;</span> <span class="built_in">void</span>,</span><br><span class="line">    complete?: <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">void</span></span><br><span class="line">  ): Subscription &#123;</span><br><span class="line">    <span class="keyword">const</span> subscriber = toSubscriber(observerOrNext, error, complete);</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.operator) &#123;</span><br><span class="line">      <span class="comment">// 做点啥</span></span><br><span class="line">      <span class="keyword">this</span>.operator(subscriber, <span class="keyword">this</span>.source);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// 没有operator，那么直接订阅源数据。</span></span><br><span class="line">      subscriber.add(<span class="keyword">this</span>._subscribe(subscriber));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> subscriber;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>这样大概的框架就搭好了。我们只需要补充map操作符和MapSubscriber即可。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> MapSubscriber&lt;T, R&gt; <span class="keyword">extends</span> Subscriber&lt;T&gt; &#123;</span><br><span class="line">	constructor(destination: Subscriber&lt;T&gt;, private project: (v: T) =&gt; R) &#123;</span><br><span class="line">    <span class="keyword">super</span>(destination);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _next(v: T) &#123;</span><br><span class="line">    <span class="keyword">const</span> newVal = <span class="keyword">this</span>.project(v);</span><br><span class="line">    <span class="keyword">this</span>.destination.next(newVal);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这里，我们复写了_next方法，这个方法我们之前没有提到过。其实是因为每次推送数据时候，都要查看当前标志位，如果我们复写next方法，就会重复判断标志位。我们可以把判断标志位的代码抽出来，继承Subscriber时候，复写 _next方法即可。而基类的next方法：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">next(v: T) &#123;</span><br><span class="line">  <span class="keyword">if</span> (!<span class="keyword">this</span>.stoped) &#123;</span><br><span class="line">  	<span class="keyword">this</span>._next(v);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">_next(v: T) &#123;</span><br><span class="line">	<span class="keyword">this</span>.destination.next(v);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>error和complete也可以照这样抽出来的。</p>
+<p>我们再来看MapSubscrber中的构造函数，它调用了super(destination)方法，我们原意是想包裹当前的Observer，所以也需要对Subscirber中构造函数做个改造。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">constructor</span>(<span class="params"></span></span><br><span class="line">    observerOrNext: Observer&lt;T&gt; | ((v: T) =&gt; void),</span><br><span class="line">    error?: <span class="function">(<span class="params">e?: <span class="built_in">any</span></span>) =&gt;</span> <span class="built_in">void</span>,</span><br><span class="line">    complete?: <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">void</span></span><br><span class="line">  ) &#123;</span><br><span class="line">    <span class="keyword">super</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> (<span class="built_in">arguments</span>.length) &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">this</span>.destination = emptySubscriber;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">if</span> (!observerOrNext) &#123;</span><br><span class="line">          <span class="keyword">this</span>.destination = emptySubscriber;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> observerOrNext === <span class="string">"object"</span>) &#123;</span><br><span class="line">          <span class="comment">// 当传进来参数是Subscriber时候，我们直接把他当做destination就好了。</span></span><br><span class="line">          <span class="keyword">if</span> (observerOrNext <span class="keyword">instanceof</span> Subscriber) &#123;</span><br><span class="line">            <span class="keyword">this</span>.destination = observerOrNext;</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">this</span>.destination = <span class="keyword">this</span>.safeSubscriber(observerOrNext);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">this</span>.destination = <span class="keyword">this</span>.safeSubscriber(observerOrNext, error, complete);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>而构造函数的第二个参数project，它应该是operator传过来的，我们来实现MapOperator：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> MapOperator&lt;T, R&gt; <span class="keyword">implements</span> Operator&lt;T&gt; &#123;</span><br><span class="line">  constructor(private project: (v: T) =&gt; R) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  call(subscriber: Subscriber&lt;T&gt;, source: Observable&lt;T&gt;) &#123;</span><br><span class="line">    <span class="keyword">return</span> source.subscribe(<span class="keyword">new</span> MapSubscriber(subscriber, <span class="keyword">this</span>.project));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后在Observable类中实现map方法：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">map&lt;R&gt;<span class="function">(<span class="params">project: (<span class="params">v: T</span>) =&gt; R</span>): <span class="params">Observable</span>&lt;<span class="params">any</span>&gt; &#123;</span></span><br><span class="line"><span class="function">  <span class="params">const</span> <span class="params">operator</span> = <span class="params">new</span> <span class="params">MapOperator</span>(<span class="params">project</span>);</span></span><br><span class="line"><span class="function">  <span class="params">return</span> <span class="params">this</span>.<span class="params">lift</span>(<span class="params">operator</span>);</span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>这样就完成了map操作符，我们通过demo验证哈：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ob = Observable.create(<span class="function"><span class="params">observer</span> =&gt;</span> &#123;</span><br><span class="line">  observer.next(<span class="number">1</span>);</span><br><span class="line">  observer.next(<span class="number">2</span>);</span><br><span class="line">  observer.next(<span class="number">3</span>);</span><br><span class="line">  observer.complete();</span><br><span class="line">&#125;);</span><br><span class="line">ob.map(<span class="function"><span class="params">x</span> =&gt;</span> x + <span class="number">1</span>)</span><br><span class="line">.map(<span class="function"><span class="params">x</span> =&gt;</span> x + <span class="number">2</span>)</span><br><span class="line">.subscribe(<span class="built_in">console</span>.log);</span><br><span class="line"><span class="comment">// 输出4 5 6</span></span><br></pre></td></tr></table></figure>
+<p>大部分的转换操作符都是对传过来的数据做了一层处理，再重新发送数据的。</p>
+<p>以上代码和demo都附在<a href="https://stackblitz.com/edit/angular-wym3cg?file=src%2Fapp%2Frxjs-practice%2Fobservable.ts" target="_blank" rel="noopener">这里</a></p>
+<h3 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h3><p>订阅的时候，最终返回的是原始的subscriber，_subscriptions递归的保存了每个上游的subscriber。</p>
+<p>例如</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ob = Rx.Observable.interval(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>).map(<span class="function"><span class="params">x</span> =&gt;</span> x + <span class="number">1</span>).filter(<span class="function"><span class="params">x</span> =&gt;</span> x &gt; <span class="number">2</span>);</span><br><span class="line"><span class="keyword">const</span> subscription = ob.subscribe(<span class="built_in">console</span>.log);</span><br><span class="line"><span class="built_in">console</span>.log(subscription);</span><br><span class="line">------</span><br><span class="line">subscription</span><br><span class="line">	-destination: safeSubscriber</span><br><span class="line">  -_subscriptions: [FilterSubscriber]</span><br><span class="line">										- destination: subscritpion</span><br><span class="line">                    - _subscriptions: [MapSubscriber]</span><br><span class="line">																			- destionation: FilterSubscriber</span><br><span class="line">                                      - _subscription: [asyncAction]</span><br></pre></td></tr></table></figure>
+<p>这样子做的好处，subsciption取消订阅时候，就可以循环将子subscription都取消掉了。</p>
+<p>而实现这个的方法，就是在传入在下游subscriber的时候加入到当前的subscriber。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Subscriber &#123;</span><br><span class="line">  <span class="keyword">constructor</span> &#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> observerOrNext === <span class="string">"object"</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (observerOrNext <span class="keyword">instanceof</span> Subscriber) &#123;</span><br><span class="line">      <span class="keyword">this</span>.destination = observerOrNext;</span><br><span class="line">      <span class="keyword">this</span>.add(observerOrNext);	<span class="comment">// 加入大排当前的_subscription</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">this</span>.destination = <span class="keyword">this</span>.safeSubscriber(observerOrNext);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="subject"><a href="#subject" class="headerlink" title="subject"></a>subject</h2><p>subject是特殊的Observable，是多播的，允许将值发送给多个观察者。上文有提到过，普通的Observable每次订阅都是独立的执行环境，而subject订阅时候大家拿到的值都是一样的，而且如果晚些订阅还会出现值丢失的情况，这时候可以使用ReplaySubject或者BehaviourSubject来解决这个问题。</p>
+<p>本质上来看，subject就是用了观察者模式，像EventEmitters，维护着多个监听器的注册表，而她维护了多个观察者的注册表。</p>
+<p>subject既是Observable，可以有next等方法，也是Observer，可以被订阅，当它被订阅的时候就会将值发送给它维护的观察者列表。下面我们就来写哈简单的Subject。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Subject&lt;T&gt; <span class="keyword">extends</span> Observable&lt;T&gt; &#123;</span><br><span class="line">  observers: Observer&lt;T&gt;[];</span><br><span class="line"></span><br><span class="line">  stoped = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">  _subscribe(subscriber: Subscriber&lt;T&gt;): Subscription &#123;</span><br><span class="line">    <span class="comment">// 如果已经停止了，不必再加入列表中</span></span><br><span class="line">    <span class="comment">// 因为这里已经需要返回subscription，便于后续取消订阅从观察者列表汇总剔除</span></span><br><span class="line">    <span class="comment">//所以_subscribe方法多了一个返回参数Subscription</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.stoped) &#123;</span><br><span class="line">      <span class="keyword">return</span> emptySubscription;</span><br><span class="line">    &#125;</span><br><span class="line">    (<span class="keyword">this</span>.observers || (<span class="keyword">this</span>.observers = [])).push(subscriber);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> SubjectSubscription(<span class="keyword">this</span>, subscriber);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  unsubscribe() &#123;</span><br><span class="line">    <span class="keyword">this</span>.stoped = <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">this</span>.observers = <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  next(v: T) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>.stoped) &#123;</span><br><span class="line">      <span class="keyword">this</span>.observers.forEach(<span class="function"><span class="params">ob</span> =&gt;</span> ob.next(v));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  error(e: <span class="built_in">any</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>.stoped) &#123;</span><br><span class="line">      <span class="keyword">this</span>.observers.forEach(<span class="function"><span class="params">ob</span> =&gt;</span> ob.error(e));</span><br><span class="line">      <span class="keyword">this</span>.unsubscribe();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  complete() &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>.stoped) &#123;</span><br><span class="line">      <span class="keyword">this</span>.observers.forEach(<span class="function"><span class="params">ob</span> =&gt;</span> ob.complete());</span><br><span class="line">      <span class="keyword">this</span>.unsubscribe();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这里Subject继承了Observable类，所以直接复写_subscribe方法。但是之前的 _subscribe是属性，我们如果直接定义方法的话，会被属性覆盖掉。所以需要将Observable的 _subscribe属性改成方法，那么如果没有传入subscribe方法的话，我们需要提供什么默认值好呢？</p>
+<p>还记得suject有个asObservable方法吗，它可以转换成Observable，不再具有next等方法，在angular中传入子组件中防止被误调用。那么这个方法又是怎么实现的呢？</p>
+<p>我们结合两者来看，当调用了asObservable方法时候，需要返回新的Observable。这时候订阅新的Observable时候，我们需要调用subject的subscribe方法，相当于要保留suject这个对象，是不是很像operator这个操作符。所以，保留subject的方法就是把它当做source传进去，然后再由source去订阅观察者。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Subject &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">	asObservable() &#123;</span><br><span class="line">		<span class="keyword">const</span> observable = <span class="keyword">new</span> Observable();</span><br><span class="line">    observable.source = <span class="keyword">this</span>;</span><br><span class="line">    <span class="keyword">return</span> observable;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Observable &#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span></span><br><span class="line">    subscribe?: (observer: Subscriber&lt;T&gt;) =&gt; void | Function | Subscription</span><br><span class="line">  ) &#123;</span><br><span class="line">    <span class="keyword">if</span> (subscribe) &#123;</span><br><span class="line">      <span class="keyword">this</span>._subscribe = subscribe;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">	_subscribe(observer: Subscriber&lt;T&gt;): <span class="built_in">void</span> | <span class="built_in">Function</span> | Subscription &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.source.subscribe(observer);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样我们既实现了asObservable方法，也实现了_subscribe方法。我们来看demo：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> subject = <span class="keyword">new</span> Subject();</span><br><span class="line">subject.asObservable().subscribe(<span class="built_in">console</span>.log);</span><br><span class="line">subject.subscribe(<span class="built_in">console</span>.log);</span><br><span class="line">subject.next(<span class="number">1</span>);</span><br><span class="line">subject.next(<span class="number">2</span>);</span><br><span class="line"><span class="comment">// 输出1 1 2 2</span></span><br></pre></td></tr></table></figure>
+<p>这时候如果我们把subject当做observer传入，是会报错的。比如</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> subject = <span class="keyword">new</span> Subject();</span><br><span class="line">subject.subscribe(<span class="built_in">console</span>.log);</span><br><span class="line">Observable.create(<span class="function"><span class="params">observer</span> =&gt;</span> &#123;</span><br><span class="line">  observer.next(<span class="number">1</span>);</span><br><span class="line">  observer.next(<span class="number">2</span>);</span><br><span class="line">  observer.next(<span class="number">3</span>);</span><br><span class="line">  observer.complete();</span><br><span class="line">&#125;).subscribe(subject);</span><br><span class="line"><span class="comment">// 报错 ERROR Error: Cannot read property 'forEach' of undefined</span></span><br></pre></td></tr></table></figure>
+<p>因为我们没有对subject进行特殊处理，当传入subscribe时候，当做普通的Object来处理，导致destination的next是subject的next，从而报错。那么，当判断是subject，我们应该直接返回该对象。但是如果我们直接在toSubscriber方法里面判断是否是Observable子类时候，就会造成循环引用，从而报错。所以我们采取了用是否包含某个变量的方法去判断。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Subject &#123;</span><br><span class="line">	rxSubject() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">toSubscriber</span>&lt;<span class="title">T</span>&gt;(<span class="params"></span></span></span><br><span class="line">  observerOrNext: Observer&lt;T&gt; | ((v: T) =&gt; void),</span><br><span class="line">  error?: <span class="function">(<span class="params">e?: <span class="built_in">any</span></span>) =&gt;</span> <span class="built_in">void</span>,</span><br><span class="line">  complete?: <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">void</span></span><br><span class="line">): Observer &#123;</span><br><span class="line">  <span class="keyword">if</span> (observerOrNext <span class="keyword">instanceof</span> Subscriber) &#123;</span><br><span class="line">    <span class="keyword">return</span> observerOrNext;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (observerOrNext[<span class="string">"rxSubject"</span>]) &#123;	<span class="comment">//当包含了rxSubject属性就返回这个对应对象</span></span><br><span class="line">    <span class="keyword">return</span> observerOrNext[<span class="string">"rxSubject"</span>]();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> Subscriber(observerOrNext, error, complete);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样subject既可以当做Observable，也是Observer，来看demo。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> subject = <span class="keyword">new</span> Subject();</span><br><span class="line">subject.subscribe(<span class="built_in">console</span>.log);</span><br><span class="line">Observable.create(<span class="function"><span class="params">observer</span> =&gt;</span> &#123;</span><br><span class="line">  observer.next(<span class="number">1</span>);</span><br><span class="line">  observer.next(<span class="number">2</span>);</span><br><span class="line">  observer.next(<span class="number">3</span>);</span><br><span class="line">  observer.complete();</span><br><span class="line">&#125;).subscribe(subject);</span><br><span class="line"><span class="comment">// 输出 1 2 3</span></span><br></pre></td></tr></table></figure>
+<p>我们来看subject虽然有操作符概念，即可以使用操作符来对数据做处理，但返回的却是Observable，不再是Subject，所以这点也要改善。而这点就只要用新的Subject去包装就可以了，不再赘述，可以自己去探索。上述的代码和概念都附在<a href="https://stackblitz.com/edit/angular-jljpdb?file=src%2Fapp%2Fapp.component.ts" target="_blank" rel="noopener">这里</a>。</p>
+<p>最后，我们来看官方提供的3个subject。</p>
+<ul>
+<li>asyncSubject：只会发送最后一个值并且在调用complete时候再去发送。类似last操作符。</li>
+<li>BehaviorSubject：会保存当前发送的值，通过getValue()获取上一次发送的值。</li>
+<li>ReplaySubject：可以保存多个旧值，一般出现订阅”丢失”的时候，我都会用这个subject。可以指定保存旧值的数量和时间。会在发出值和订阅的时候检查内部旧值是否超过数量或者时间，从而剔除。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/11/rxjs操作符/" rel="next" title="rxjs操作符">
+                <i class="fa fa-chevron-left"></i> rxjs操作符
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="食饼筒" />
+            
+              <p class="site-author-name" itemprop="name">食饼筒</p>
+              <p class="site-description motion-element" itemprop="description">do better</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本Observable"><span class="nav-number">1.</span> <span class="nav-text">基本Observable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Subscriber类的衍生"><span class="nav-number">2.</span> <span class="nav-text">Subscriber类的衍生</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#操作符"><span class="nav-number">3.</span> <span class="nav-text">操作符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#更新"><span class="nav-number">3.1.</span> <span class="nav-text">更新</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#subject"><span class="nav-number">4.</span> <span class="nav-text">subject</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">食饼筒</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+<div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共15.8k字</span>
+</div>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

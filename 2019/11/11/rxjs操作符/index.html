@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近一星期把5.0版本的操作符都看了一遍，大致梳理了一下思路。其实很多操作符的思路大同小异，比如组合的操作符；有些操作符的设计比较巧妙，比如zip操作符，如果不看源码，我还以为只能传入Observable数组，没想到还能传入数组等可迭代对象。好了，我们分类讨论下这些操作符，说的比较浅，大致上是给自己一个印象。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rxjs操作符">
+<meta property="og:url" content="http://yoursite.com/2019/11/11/rxjs操作符/index.html">
+<meta property="og:site_name" content="稠鱼烧才好吃">
+<meta property="og:description" content="最近一星期把5.0版本的操作符都看了一遍，大致梳理了一下思路。其实很多操作符的思路大同小异，比如组合的操作符；有些操作符的设计比较巧妙，比如zip操作符，如果不看源码，我还以为只能传入Observable数组，没想到还能传入数组等可迭代对象。好了，我们分类讨论下这些操作符，说的比较浅，大致上是给自己一个印象。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-11-11T03:18:20.121Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="rxjs操作符">
+<meta name="twitter:description" content="最近一星期把5.0版本的操作符都看了一遍，大致梳理了一下思路。其实很多操作符的思路大同小异，比如组合的操作符；有些操作符的设计比较巧妙，比如zip操作符，如果不看源码，我还以为只能传入Observable数组，没想到还能传入数组等可迭代对象。好了，我们分类讨论下这些操作符，说的比较浅，大致上是给自己一个印象。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/11/rxjs操作符/"/>
+
+
+
+
+
+  <title>rxjs操作符 | 稠鱼烧才好吃</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">稠鱼烧才好吃</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/11/rxjs操作符/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="食饼筒">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="稠鱼烧才好吃">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">rxjs操作符</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-11T10:33:06+08:00">
+                2019-11-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/rxjs/" itemprop="url" rel="index">
+                    <span itemprop="name">rxjs</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近一星期把5.0版本的操作符都看了一遍，大致梳理了一下思路。其实很多操作符的思路大同小异，比如组合的操作符；有些操作符的设计比较巧妙，比如zip操作符，如果不看源码，我还以为只能传入Observable数组，没想到还能传入数组等可迭代对象。好了，我们分类讨论下这些操作符，说的比较浅，大致上是给自己一个印象。</p>
+<a id="more"></a>
+<h2 id="创建操作符"><a href="#创建操作符" class="headerlink" title="创建操作符"></a>创建操作符</h2><p>大部分创建操作符都可以传入schedule，我们先说一哈schedule好了。</p>
+<h3 id="schedule"><a href="#schedule" class="headerlink" title="schedule"></a>schedule</h3><p>schedule概念：</p>
+<ol>
+<li>schedule-调度器，包含了action的队列。</li>
+<li>action-在调度器中执行的单位，会在execute回调work方法。</li>
+<li>work-在action中执行的单位，会在单次的setInterval（当delayTime不一样时候，调用clearInterval方法）被调用。一个work就是任务，例如在setInterval，就是index += 1；</li>
+</ol>
+<p>首先当实现interval这类操作符时候想到的是用setTimout和setInterval，然而内部并未使用setTimeout，而是用setInterval去模拟setTimeout，说是在时间循环中，setInterval比setTimeout的时间控制上更精确。实现方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> id,</span><br><span class="line">  delayTime,</span><br><span class="line">  pending = <span class="literal">false</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">simluation</span>(<span class="params">delay, action</span>) </span>&#123;</span><br><span class="line">  pending = <span class="literal">true</span>;</span><br><span class="line">  <span class="keyword">if</span> (id) &#123;</span><br><span class="line">    id = recycle(delay);</span><br><span class="line">  &#125;</span><br><span class="line">  id = id || request(delay, action);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">request</span>(<span class="params">delay, action</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> setInterval(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    pending = <span class="literal">false</span>;</span><br><span class="line">    action();</span><br><span class="line">    <span class="keyword">if</span> (!pending) &#123;</span><br><span class="line">      id = recycle();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, delay);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">recycle</span>(<span class="params">delay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (delay &amp;&amp; delay === delayTime) &#123;</span><br><span class="line">    <span class="keyword">return</span> id;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> clearInterval(id) || <span class="literal">undefined</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">---example----</span><br><span class="line">simluation(<span class="number">1000</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="number">0</span>);</span><br><span class="line">  simluation(<span class="number">1000</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">0</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 输出0 0</span></span><br></pre></td></tr></table></figure>
+<p>需要实现interval时候，那么要不断调用simluation方法，并且传入相同的delay。主要依据是如果delay和之前的不一样说明这是新的task，那么就会清除掉之前的id。用了一个pending变量作为是否是在重复调用simluation方法，否则由于先调用action方法，再调用recycle方法，没有设置变量的话，就会直接清除掉这个定时任务。当然也可以先调用recycle方法，再调用action方法，这样就要重复设置定时任务，避免不必要的开销。</p>
+<p>我们先来看timer的源码</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">_subscriber</span>(<span class="params">subscriber: Subscriber</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  scheduler.schedule(TimerObservable.dispatch, dueTime, &#123;</span><br><span class="line">  	index, period, subscriber</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// dispatch方法</span></span><br><span class="line"><span class="keyword">static</span> dispatch(state: <span class="built_in">any</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; index, period, subscriber &#125; = state;</span><br><span class="line">    <span class="keyword">const</span> action = (&lt;<span class="built_in">any</span>&gt; <span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">    subscriber.next(index);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (subscriber.closed) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (period === <span class="number">-1</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> subscriber.complete();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    state.index = index + <span class="number">1</span>;</span><br><span class="line">    action.schedule(state, period);</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// rx中调用work方法</span></span><br><span class="line">execute(state: T, delay: <span class="built_in">number</span>): <span class="built_in">any</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.closed) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'executing a cancelled action'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.pending = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">const</span> error = <span class="keyword">this</span>._execute(state, delay);</span><br><span class="line">    <span class="keyword">if</span> (error) &#123;</span><br><span class="line">      <span class="keyword">return</span> error;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.pending === <span class="literal">false</span> &amp;&amp; <span class="keyword">this</span>.id != <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="keyword">this</span>.id = <span class="keyword">this</span>.recycleAsyncId(<span class="keyword">this</span>.scheduler, <span class="keyword">this</span>.id, <span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第一次调用dispatch方法，发出值后，如果没有传入timer第二个参数，这个方法就会return，并且调用complete方法。当此方法return时候，就会向下执行recycleAsyncId方法，在这里就会停止执行setInterval中的回调。如果传入，那么就会递归dispatch方法，直到取消订阅。</li>
+<li>当第二次调用dispatch方法时候，发现之前的delay和本次传入的delay时间不一致，就会取消执行之前的setInterval回调，而重新设置新的回调。这样就做得到了setInterval方法。</li>
+<li>dispatch方法中有state参数，保存了setInterval中需要的参数，就避免了this的问题。</li>
+</ul>
+<p>schedule类别:</p>
+<ul>
+<li>async：是最主要的schedule，其余的都是继承这个来实现，我们之前的分析也是基于此。</li>
+<li>queue：就是一个队列而已，也会允许传入delay参数，传入后就变回了async。ps：没有在rxjs内部有看到过有用到过这个schedule，很多博客上都说repeat()有使用，然而repeat()就是重复subscribe()而已。</li>
+<li>asap：微任务队列。个人在测试中，觉得就是比同步代码执行时间晚，比setTImeout执行时间早，和事件循环机制还是差了一点。内部是实现了setImmediate方法，在不同执行环境中实现原理不同，例如IE中的setImmediate和node中的nextTick方法。在chrome中，是用postMessage实现。内部有一个任务的map，当来一个任务时候，会用唯一标识作为前缀，id作为索引存储传入的回调函数。当接收到消息时候，如果当前已经有在运行的任务，把当前任务再加入到setTImeout队列中，否则就执行从任务的map中清楚掉该任务。</li>
+<li>animationFrame：和asap差不多道理，内部是调用了requestAnimationFrame方法。</li>
+</ul>
+<p>创建操作符都是比较简单的，主要想说一下from这个操作符。</p>
+<ul>
+<li>可传入schedule参数。</li>
+<li>如果传入的数组中只有一个值，会转换成ScalarObservable，即Observable源码中_scalar参数置为true。这里不是很懂为什么需要衍生出这样的一个Observable，而且在很多地方都会对是否只有一个值判断。如果没有值，那么就会转换成EmprtyObservable，即直接调用complete方法，否则再去依次发出数组中的值。</li>
+</ul>
+<h2 id="组合操作符"><a href="#组合操作符" class="headerlink" title="组合操作符"></a>组合操作符</h2><p>大部分组合observable的操作符，都是差不多的方式。来看combinLatest操作符，它的作用是当任意observable发出值的时候，接受所有observable的最新值（必须每个都有值才能接收到）：</p>
+<ul>
+<li>任意observable发出值的时候，都要确认其他的observable是否有值，所以这里应该有层封装在所有onservable之上，可以看做是outer和Inner的关系。当Inner发出值时候，通知outer组装数据。</li>
+<li>combineLatest即是静态方法，也是实例方法。当他是实例方法时候，可以看做一个operator，继承Subscriber类就可以了。但是是静态方法的话，为了复用这个operator，可以创建Observable再调用这个Operator，然后在_next中收集observable，在_complete方法中创建Inners。因为observables是数组，理想的observable应是ArrayObservable。</li>
+</ul>
+<p>下面我们实现一哈forkJoin操作符。首先应该有个OuterSubscriber去继承Subscriber，并且持有源subscriber引用。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> OuterSubscriber&lt;T&gt; <span class="keyword">extends</span> Subscriber&lt;T&gt; &#123;</span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params">destination: Subscriber&lt;T&gt;</span>) &#123;</span><br><span class="line">    <span class="keyword">super</span>(destination);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  notifyNext(v: T, innerIndex: <span class="built_in">number</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>.destination.next(v);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  notifyError(e: <span class="built_in">any</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>.destination.error(e);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  notifyComplete() &#123;</span><br><span class="line">    <span class="keyword">this</span>.destination.complete();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后InnerSubscriber应该持有OuterSubscriber引用，当它发出值的时候就回去通知OuterSUbscriber。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> InnerSubscriber&lt;T&gt; <span class="keyword">extends</span> Subscriber&lt;T&gt; &#123;</span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"><span class="keyword">private</span> outer: OuterSubscriber&lt;T&gt;, <span class="keyword">private</span> index: <span class="built_in">number</span></span>) &#123;</span><br><span class="line">    <span class="keyword">super</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _next(v: T) &#123;</span><br><span class="line">    <span class="keyword">this</span>.outer.notifyNext(v, <span class="keyword">this</span>.index);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _error(e: <span class="built_in">any</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>.outer.notifyError(e);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _complete() &#123;</span><br><span class="line">    <span class="keyword">this</span>.outer.notifyComplete();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为forkJoin是静态方法，返回了一个Observable，所以它应该继承了Obsevable类，而且复写了_subscribe方法。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">forkJoin</span>(<span class="params">observables: Observable[]</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> ForkJoinObservable(observables);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> ForkJoinObservable&lt;T&gt; <span class="keyword">extends</span> Observable&lt;T&gt; &#123;</span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"><span class="keyword">private</span> observables: Observable[]</span>) &#123;</span><br><span class="line">    <span class="keyword">super</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _subscribe(subscriber: Subscriber) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ForkJoinSubscriber(subscriber, <span class="keyword">this</span>.observables);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来，我们只要实现ForkJoinSubscriber即可。ForkJoinSubscriber这时候应该是OuterSubscriber，传入的observable数组都是InnerSubscriber，当他们完成的时候需要检查是否所有的observable都发出值，如果有的话就发出值。但是像下面这样是发不出值的。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Rx.Observable.forkJoin(Rx.Observable.of(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>),Rx.Observable.from([])).subscribe(<span class="built_in">console</span>.log);</span><br></pre></td></tr></table></figure>
+<p>因为Rx.Observable.from([])并没有发出值。所以我们需要检查每个Observable是否有值。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> ForkJoinSubscriber&lt;T&gt; <span class="keyword">extends</span> OuterSubscriber&lt;T&gt; &#123;</span><br><span class="line">  values = [];</span><br><span class="line">  length = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params">subscriber: Subscriber, <span class="keyword">private</span> observables: Observable[]</span>) &#123;</span><br><span class="line">    <span class="keyword">super</span>(subscriber);</span><br><span class="line">    <span class="keyword">this</span>._subscribe();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _subscribe() &#123;</span><br><span class="line">    <span class="keyword">this</span>.observables.forEach(<span class="function">(<span class="params">observable, index</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">this</span>.add(observable.subscribe(<span class="keyword">new</span> InnerSubscriber(<span class="keyword">this</span>, index)));</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  notifyNext(v: T, index: <span class="built_in">number</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>.values[index] = v;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  notifyComplete() &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.length + <span class="number">1</span> === <span class="keyword">this</span>.observables.length) &#123;</span><br><span class="line">    	<span class="keyword">if</span> (<span class="keyword">this</span>.values.every(<span class="function"><span class="params">v</span> =&gt;</span> <span class="built_in">Boolean</span>(v))) &#123;</span><br><span class="line">        <span class="keyword">this</span>.destination.next(<span class="keyword">this</span>.values);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">this</span>.destination.complete();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">this</span>.length++;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>复写了notifyNext和notifyComplete方法。notifyNext就是简单地记录值，而notifyComplete是检查是否可以结束该流。以上代码附在<a href="https://stackblitz.com/edit/angular-ngcfjx?file=src%2Fapp%2Frxjs-practice%2Foperators%2FforkJoin.ts" target="_blank" rel="noopener">这里</a></p>
+<p>zip操作符：</p>
+<ul>
+<li><p>之前一直以为他只能传入observables数组，查看源码后，才发现他可以传入数组或者继承了Symbol.iterator的对象。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">set</span> = <span class="keyword">new</span> Set([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]);</span><br><span class="line"><span class="keyword">const</span> ob = Rx.Observable.of(<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>);</span><br><span class="line">Rx.Observable.zip(<span class="keyword">set</span>, ob).subscribe(<span class="built_in">console</span>.log);	<span class="comment">// 输出[1,4] [2,5] [3,6]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>内部实现为iterator数组，好处在于不用为每个传入的数据源创建数组，节省了内存。只需要遍历iterator，调用其next方法，即可得到每个数据源发送的值。因为只有Observable是有可能异步的，所以只需要在Observable发出值的去遍历iterator即可。</p>
+</li>
+<li><p>在这里，父子关系嵌套了两层。根是zip操作符创建出的Observable，叶子节点是传入zip方法的Observable参数。位于这两者之间的是继承了Iterator接口的对象，属于包装类。叶子节点发出值时，包装类会先放入缓冲中，再去通知根节点去遍历iterators对象。当叶子节点complete时候，包装类通知根节点当前活动的Observable减少1，如果所有活动的Observable数量为0，当前流结束。</p>
+</li>
+</ul>
+<p>concat和merge操作符</p>
+<ul>
+<li>这里的实现有点巧妙。一开始以为两者毫无关系，查看源码后，发现底层用的方法是一样的。merge操作符是任意子Observable发出值的时候，通知outter发送该子Observable发出的值。我们可以把所有的Observable看做无限长的队列。而concat操作符是Observable按照顺序发送值，只有前一个Obsevable结束，下一个才可以发送值。所以我们可以看做是只有1个值的队列。</li>
+<li>在队列中的值允许发送值，结束后，从缓冲池中取出下一个Observable。如果缓冲池为空，说明流结束。</li>
+<li>个人感觉merge和mergeAll是一样的，只是调用方式不同，merge既是静态方法也会是实例方法，而mergeAll只能是实例方法，还不能有参数，这说明，前一个操作符必须返回Observable才能产生订阅。</li>
+<li>exhaust由于没有做缓冲池，所以当有Observable在订阅时候，即使有新的Observbale过来也只能被舍弃。</li>
+</ul>
+<h2 id="多播操作符"><a href="#多播操作符" class="headerlink" title="多播操作符"></a>多播操作符</h2><p>multicast</p>
+<ul>
+<li>底层使用Subject，在显式地调用connect方法后，才会订阅源数据。当所有观察都取消订阅后，最好将connect返回的Subscription取消订阅，否则源数据仍在发送值。</li>
+<li>subject最好传入工厂模式的subject，每次返回一个新的subject，否则源数据调用complete后，这个subject也将不会再发送值。但是是取消订阅的话，会清掉内部原来的订阅，再次调用connect方法后，可以重新连接上。</li>
+<li>在5.0.0版本后，调用multicast()方法后，并不是返回一个ConnectableObservable，而是使用Object.create()将ConnectableObservable的方法挂载到源数据上。可能认为这和源数据无太大差异？不应该创建出一个新的Observable？</li>
+</ul>
+<p>refCount</p>
+<ul>
+<li>当共享的Connection和当前mutlicast中的Connetction是同一个时候，将mutlicast的Connetction取消订阅。（没有想到会有不同的时候）</li>
+</ul>
+<p>其余</p>
+<ul>
+<li>publish = mutlicast(new Subject())。不同的publish只是传入了不同的subject。</li>
+<li>share = mutlicast(new Subject()).refCount()</li>
+</ul>
+<h2 id="过滤操作符"><a href="#过滤操作符" class="headerlink" title="过滤操作符"></a>过滤操作符</h2><p>throttleTime,auditTime和sampleTime区别</p>
+<ul>
+<li><p>sampleTime是个周期检查，而不是在发出值之后会忽略之后发出的值。</p>
+</li>
+<li><p>source: ———0–1—2—————3-4-5————6-7–8—-</p>
+<p>​                throttleTime(1000)</p>
+<p>example:–——0———————-3——————6———    取第一个值</p>
+<p>​                auditTime(1000)</p>
+<p>example:—————2———————5——————8—    取最后一个</p>
+</li>
+</ul>
+<p>参考rxjs写了一个throttle（之前写过throttle参考了网上上文章，是用时间作为变量，现在感觉不用。）：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">throttle = <span class="function"><span class="keyword">function</span>(<span class="params">work, delay</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> pendding = <span class="literal">false</span>;</span><br><span class="line">  hasValue = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (pendding) &#123;</span><br><span class="line">      hasValue = <span class="literal">true</span>;</span><br><span class="line">      <span class="comment">// do nothing;</span></span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    work();</span><br><span class="line">    pendding = <span class="literal">true</span>;</span><br><span class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      pendding = <span class="literal">false</span>;</span><br><span class="line">      <span class="keyword">if</span> (hasValue) &#123;		<span class="comment">// 现在对应的是auditTime</span></span><br><span class="line">        work();					<span class="comment">// 如果我们去掉这个if语句，就是throttleTime，只有在非静默期时候再次</span></span><br><span class="line">        hasValue = <span class="literal">false</span>;	<span class="comment">// 调用，才会执行work方法，之前多次调用也不理会，算是不同的理解吧</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;, delay);</span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+<p>和时间有关的都是用到了schedule，例如debounceTime,throttleTime等等。</p>
+<p>其他操作符都是比较容易想到的，除了take操作符，他在这里调用了</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.destination.complete();</span><br><span class="line"><span class="keyword">this</span>.unsubscribe();		<span class="comment">// 个人认为调用complete方法后，也会调用unsubcribe方法。查看takeWhile</span></span><br><span class="line">											<span class="comment">// 方法都是只调用了complete，所以没懂这里</span></span><br></pre></td></tr></table></figure>
+<h2 id="转换操作符"><a href="#转换操作符" class="headerlink" title="转换操作符"></a>转换操作符</h2><p>expand</p>
+<p>​    对传入的project函数做递归。每次将自己作为Outter，project函数返回的Observable作为Inner，当Innner发出值时候，重新调用_next方法（包含Observer发出值和递归调用逻辑）。</p>
+<p>partition</p>
+<p>​    根据给定的predict函数转化成两个Observable。巧妙的使用了filter操作符去过滤，第一个传入原函数，第二个传入not（函数）。</p>
+<p>plunk</p>
+<p>​    传入的是多个字符串，…args结构成props: string[]一个参数。</p>
+<p>bufferWhen</p>
+<p>​    subscribing作用？Inner发出值之后紧跟complete？不懂</p>
+<p>buffterTime</p>
+<p>​    只给定bufferTimeSpan的话，在经历bufferTimeSpan时间后发送该缓冲区的值，并删去该缓冲区，并重新启动一个缓冲区。</p>
+<p>​    给定了bufferCreationInterval的话，会在bufferTimeSpan时间后发送缓冲区的值并删去，但不重新启动缓冲区，而是在bufferCreationInterval时间后重新启动一个缓冲区。</p>
+<p>删除缓冲区时候代码</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> spliceIndex = contexts ? contexts.indexOf(context) : <span class="number">-1</span>;</span><br><span class="line"><span class="keyword">if</span> (spliceIndex &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">  contexts.splice(contexts.indexOf(context), <span class="number">1</span>);</span><br><span class="line">&#125;	<span class="comment">// 也是先查找到索引，再在原数组删除。</span></span><br></pre></td></tr></table></figure>
+<p>bufferToggle</p>
+<p>​    openings发出值的时候，会去调用closingSelector这个方法并去订阅他的返回值。如果closingSelector返回的流发出值或者结束，就会取消该订阅并发出值。在notifyNext方法通过是否有OuterValue来区分是openings发出的值，还是closingSelector返回流发出的值。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">notifyNext(outerValue: <span class="built_in">any</span>, innerValue: O,</span><br><span class="line">             outerIndex: <span class="built_in">number</span>, innerIndex: <span class="built_in">number</span>,</span><br><span class="line">             innerSub: InnerSubscriber&lt;T, O&gt;): <span class="built_in">void</span> &#123;</span><br><span class="line">  outerValue ? <span class="keyword">this</span>.closeBuffer(outerValue) : <span class="keyword">this</span>.openBuffer(innerValue);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// openings订阅调用add(subscribeToResult(this, openings))</span></span><br><span class="line"><span class="comment">// closingSelector订阅调用subscribeToResult(this, closingNotifier, &lt;any&gt;context)</span></span><br><span class="line"><span class="comment">// 第三个参数就是outerValue。(存储了该订阅返回的subscriber和缓冲值，方便后续处理)</span></span><br></pre></td></tr></table></figure>
+<p>windowxx</p>
+<p>​    和buffer差不多，buffer内部直接保存值（用的是值数组），window内部用的是subject数组并将其返回。</p>
+<h2 id="错误处理操作符"><a href="#错误处理操作符" class="headerlink" title="错误处理操作符"></a>错误处理操作符</h2><p>catch</p>
+<ol>
+<li>当接收到错误时候，通过selector方法得到新的Observable。</li>
+<li>取消原来的订阅。</li>
+<li>将自己当做Outer，订阅新的Observable。</li>
+</ol>
+<p>retryWhen</p>
+<p>​    只有notifier方法返回的Observable发出值的时候，才会去重新发起订阅。内部使用了subject对notefier方法发出值。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/07/防抖和节流/" rel="next" title="防抖和节流">
+                <i class="fa fa-chevron-left"></i> 防抖和节流
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/11/动手写一个Observable/" rel="prev" title="动手写一个Observable">
+                动手写一个Observable <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="食饼筒" />
+            
+              <p class="site-author-name" itemprop="name">食饼筒</p>
+              <p class="site-description motion-element" itemprop="description">do better</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建操作符"><span class="nav-number">1.</span> <span class="nav-text">创建操作符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#schedule"><span class="nav-number">1.1.</span> <span class="nav-text">schedule</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#组合操作符"><span class="nav-number">2.</span> <span class="nav-text">组合操作符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多播操作符"><span class="nav-number">3.</span> <span class="nav-text">多播操作符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#过滤操作符"><span class="nav-number">4.</span> <span class="nav-text">过滤操作符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#转换操作符"><span class="nav-number">5.</span> <span class="nav-text">转换操作符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#错误处理操作符"><span class="nav-number">6.</span> <span class="nav-text">错误处理操作符</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">食饼筒</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+<div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style='display:none'>
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共15.8k字</span>
+</div>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
