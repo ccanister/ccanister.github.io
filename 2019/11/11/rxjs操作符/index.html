@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="稠鱼烧才好吃">
 <meta property="og:description" content="最近一星期把5.0版本的操作符都看了一遍，大致梳理了一下思路。其实很多操作符的思路大同小异，比如组合的操作符；有些操作符的设计比较巧妙，比如zip操作符，如果不看源码，我还以为只能传入Observable数组，没想到还能传入数组等可迭代对象。好了，我们分类讨论下这些操作符，说的比较浅，大致上是给自己一个印象。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-11T03:18:20.121Z">
+<meta property="og:updated_time" content="2019-11-11T03:38:14.705Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="rxjs操作符">
 <meta name="twitter:description" content="最近一星期把5.0版本的操作符都看了一遍，大致梳理了一下思路。其实很多操作符的思路大同小异，比如组合的操作符；有些操作符的设计比较巧妙，比如zip操作符，如果不看源码，我还以为只能传入Observable数组，没想到还能传入数组等可迭代对象。好了，我们分类讨论下这些操作符，说的比较浅，大致上是给自己一个印象。">
@@ -395,6 +395,11 @@
 <li>个人感觉merge和mergeAll是一样的，只是调用方式不同，merge既是静态方法也会是实例方法，而mergeAll只能是实例方法，还不能有参数，这说明，前一个操作符必须返回Observable才能产生订阅。</li>
 <li>exhaust由于没有做缓冲池，所以当有Observable在订阅时候，即使有新的Observbale过来也只能被舍弃。</li>
 </ul>
+<p>withLatesetFrom这个操作符有点难用，是个实例操作符，以前以为不管是哪个Observable发出值，subsriber都会接收到，每次用都发现不得行，看了源码才知道，只有主Observable发出值的时候，才会让subscriber接受到值。而且如果副Observable没有值的话，即使主Observable发出值也没有用。例如：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Rx.Observable.timer(<span class="number">0</span>, <span class="number">2000</span>).withLatestFrom(Rx.Observable.timer(<span class="number">1000</span>,<span class="number">1000</span>)).subscribe(<span class="built_in">console</span>.log);</span><br><span class="line"><span class="comment">// 输出[1,0] [2,2] [3,4] [4,6]</span></span><br></pre></td></tr></table></figure>
+<p>主 ——0————1————2————3————4</p>
+<p>副 ———0——1——2——3——4——5——6</p>
+<p>只有副流发出值的时候，主流发出值才会有效。</p>
 <h2 id="多播操作符"><a href="#多播操作符" class="headerlink" title="多播操作符"></a>多播操作符</h2><p>multicast</p>
 <ul>
 <li>底层使用Subject，在显式地调用connect方法后，才会订阅源数据。当所有观察都取消订阅后，最好将connect返回的Subscription取消订阅，否则源数据仍在发送值。</li>
@@ -676,7 +681,7 @@
 </span>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共15.8k字</span>
+  <span class="post-count">博客全站共16k字</span>
 </div>
 </div>
 
