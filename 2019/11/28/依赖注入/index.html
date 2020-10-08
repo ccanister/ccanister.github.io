@@ -6,10 +6,10 @@
 
 
 <html class="theme-next mist use-motion" lang="zh-Hans">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="theme-color" content="#222">
 
 
@@ -20,8 +20,8 @@
 
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
 
 
@@ -40,7 +40,7 @@
 
   
   
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
 
 
 
@@ -48,9 +48,9 @@
 
 
 
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
 
-<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="angular di," />
+  <meta name="keywords" content="angular di,">
 
 
 
@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="稠鱼烧才好吃">
 <meta property="og:description" content="什么是依赖注入在面向对象语言中，在调用某个类的时候，必选先实例化该类，生成一个对象。 如果这个类需要调用其他类的时候，甚至其他类也依赖更多的其他类，我们就需要无数次的实例化。 而依赖注入，即依赖注入到容器（IOC）中，它里面有某个类和其依赖，当你需要实例时候，他会把你实例化好给你。 依赖注入的实现原理需要实现依赖注入，最主要的是我们需要知道这个类的依赖，即构造器中的参数类型。 通过reflect-">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-12-12T13:06:34.156Z">
+<meta property="og:updated_time" content="2020-04-14T01:33:21.214Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="依赖注入">
 <meta name="twitter:description" content="什么是依赖注入在面向对象语言中，在调用某个类的时候，必选先实例化该类，生成一个对象。 如果这个类需要调用其他类的时候，甚至其他类也依赖更多的其他类，我们就需要无数次的实例化。 而依赖注入，即依赖注入到容器（IOC）中，它里面有某个类和其依赖，当你需要实例时候，他会把你实例化好给你。 依赖注入的实现原理需要实现依赖注入，最主要的是我们需要知道这个类的依赖，即构造器中的参数类型。 通过reflect-">
@@ -120,7 +120,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/11/28/依赖注入/"/>
+  <link rel="canonical" href="http://yoursite.com/2019/11/28/依赖注入/">
 
 
 
@@ -154,7 +154,7 @@
     
 
     <div class="custom-logo-site-title">
-      <a href="/"  class="brand" rel="start">
+      <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
         <span class="site-title">稠鱼烧才好吃</span>
         <span class="logo-line-after"><i></i></span>
@@ -184,7 +184,7 @@
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
             
             首页
           </a>
@@ -194,7 +194,7 @@
         <li class="menu-item menu-item-categories">
           <a href="/categories/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
             
             分类
           </a>
@@ -204,7 +204,7 @@
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
             
             归档
           </a>
@@ -247,7 +247,7 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="食饼筒">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.png">
     </span>
 
@@ -363,7 +363,7 @@
 <p>编译时期，当解析完参数时候，就会将其变成对应数字：</p>
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> flags = DepFlags.None;</span><br><span class="line"><span class="keyword">if</span> (dep.isSkipSelf) &#123;</span><br><span class="line">	flags |= DepFlags.SkipSelf;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (dep.isOptional) &#123;</span><br><span class="line">	flags |= DepFlags.Optional;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (dep.isSelf) &#123;</span><br><span class="line">	flags |= DepFlags.Self;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (dep.isValue) &#123;</span><br><span class="line">	flags |= DepFlags.Value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>比如我们现在有个service:</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> MY_SERVICE_TOKEN = <span class="keyword">new</span> InjectionToken(<span class="string">"dabai"</span>, &#123;</span><br><span class="line">  providedIn: <span class="string">"root"</span>,</span><br><span class="line">  factory: <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">new</span> MyService()</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> MyHelloService &#123;</span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span></span><br><span class="line">    @Optional() sharedService: SharedService,</span><br><span class="line">    <span class="meta">@SkipSelf</span>() <span class="meta">@Inject</span>(MY_SERVICE_TOKEN) <span class="keyword">private</span> myService: MyService</span><br><span class="line">  ) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> MY_SERVICE_TOKEN = <span class="keyword">new</span> InjectionToken(<span class="string">"dabai"</span>, &#123;</span><br><span class="line">  providedIn: <span class="string">"root"</span>,</span><br><span class="line">  factory: <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">new</span> MyService()</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> MyHelloService &#123;</span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span></span><br><span class="line"><span class="params">    <span class="meta">@Optional</span>() sharedService: SharedService,</span></span><br><span class="line"><span class="params">    <span class="meta">@SkipSelf</span>() <span class="meta">@Inject</span>(MY_SERVICE_TOKEN) <span class="keyword">private</span> myService: MyService</span></span><br><span class="line"><span class="params">  </span>) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>我们用<code>./node_modules/.bin/ngc src/tsconfig.app.json</code>编译文件，可以看到</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">i1.ɵprd(<span class="number">512</span>, <span class="literal">null</span>, i4.MyHelloService, i4.MyHelloService, [</span><br><span class="line">  [<span class="number">2</span>, i5.SharedService],</span><br><span class="line">  [<span class="number">1</span>, i6.MY_SERVICE_TOKEN]</span><br><span class="line">]),</span><br></pre></td></tr></table></figure>
 <p>其中ɵprd是providerDef的简称，会去注册该token。而最后一个参数是个二维数组，里面的数字和上面的enum对应起来。</p>
@@ -377,10 +377,8 @@
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (injectableDef = getInjectableDef(depDef.token)) &amp;&amp; <span class="comment">// 判断是否包含ngInjectableDef属性</span></span><br><span class="line">  targetsModule(data, injectableDef)) &#123;	<span class="comment">// 当前模块是否是注册的特性模块或者是根模块</span></span><br><span class="line">      <span class="keyword">const</span> index = data._providers.length;</span><br><span class="line">      data._def.providersByKey[depDef.tokenKey] = &#123;</span><br><span class="line">        flags: NodeFlags.TypeFactoryProvider | NodeFlags.LazyProvider,</span><br><span class="line">        value: injectableDef.factory,</span><br><span class="line">        deps: [], index,</span><br><span class="line">        token: depDef.token,</span><br><span class="line">      &#125;;</span><br><span class="line">      data._providers[index] = UNDEFINED_VALUE;</span><br><span class="line">      <span class="keyword">return</span> (</span><br><span class="line">          data._providers[index] = _createProviderInstance(data, data._def.providersByKey[depDef.tokenKey]));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="Angular依赖注入使用"><a href="#Angular依赖注入使用" class="headerlink" title="Angular依赖注入使用"></a>Angular依赖注入使用</h2><ol>
 <li>ElementRef: 注入自身 DOM 元素，在指令中用的较多。</li>
-<li><p>利用抽象类，拿到父组件实例。</p>
-</li>
-<li><p>如果类发生了引用循环，也可以使用forwardRef或者Injector。</p>
-</li>
+<li>利用抽象类，拿到父组件实例。</li>
+<li>如果类发生了引用循环，也可以使用forwardRef或者Injector。</li>
 <li>由于是单例的，很适合做状态存储或者父子组件传递数据。</li>
 <li>可以模仿mvc结构，抽出service和api层，而component只有数据和视图。</li>
 </ol>
@@ -406,7 +404,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/angular-di/" <i class="fa fa-tag"></i> angular di</a>
+            <a href="/tags/angular-di/" <i class="fa fa-tag"> angular di</a>
           
         </div>
       
@@ -497,9 +495,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image"
-                src="/images/avatar.png"
-                alt="食饼筒" />
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="食饼筒">
             
               <p class="site-author-name" itemprop="name">食饼筒</p>
               <p class="site-description motion-element" itemprop="description">do better</p>
@@ -512,7 +508,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -523,7 +519,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -587,7 +583,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -610,16 +606,16 @@
 
 <div>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<span id="busuanzi_container_site_pv" style='display:none'>
+<span id="busuanzi_container_site_pv" style="display:none">
     本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
     <span class="post-meta-divider">|</span>
 </span>
-<span id="busuanzi_container_site_uv" style='display:none'>
+<span id="busuanzi_container_site_uv" style="display:none">
     有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
 </span>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共23.9k字</span>
+  <span class="post-count">博客全站共60.9k字</span>
 </div>
 </div>
 

@@ -6,10 +6,10 @@
 
 
 <html class="theme-next mist use-motion" lang="zh-Hans">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="theme-color" content="#222">
 
 
@@ -20,8 +20,8 @@
 
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
 
 
@@ -40,7 +40,7 @@
 
   
   
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
 
 
 
@@ -48,9 +48,9 @@
 
 
 
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
 
-<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Hexo, NexT">
 
 
 
@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="稠鱼烧才好吃">
 <meta property="og:description" content="我在Angular文档中读到于Dom有关的时候，发现总会提及到以下几个名词:ElementRef,TemplateRef,ViewContainerRef等等。但是，Angular文档和其他博客等，都没有对这些名词有着相关联的描述和他们如何使用的例子。本文目的就是尽可能描述清楚。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-02-07T16:28:04.573Z">
+<meta property="og:updated_time" content="2019-02-07T16:28:04.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="探索如何使用ViewContainerRef操作Dom节点">
 <meta name="twitter:description" content="我在Angular文档中读到于Dom有关的时候，发现总会提及到以下几个名词:ElementRef,TemplateRef,ViewContainerRef等等。但是，Angular文档和其他博客等，都没有对这些名词有着相关联的描述和他们如何使用的例子。本文目的就是尽可能描述清楚。">
@@ -119,7 +119,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/10/15/viewContainerRef/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/10/15/viewContainerRef/">
 
 
 
@@ -153,7 +153,7 @@
     
 
     <div class="custom-logo-site-title">
-      <a href="/"  class="brand" rel="start">
+      <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
         <span class="site-title">稠鱼烧才好吃</span>
         <span class="logo-line-after"><i></i></span>
@@ -183,7 +183,7 @@
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
             
             首页
           </a>
@@ -193,7 +193,7 @@
         <li class="menu-item menu-item-categories">
           <a href="/categories/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
             
             分类
           </a>
@@ -203,7 +203,7 @@
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
             
             归档
           </a>
@@ -246,7 +246,7 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="食饼筒">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.png">
     </span>
 
@@ -282,7 +282,7 @@
           </span>
 
           
-            <span class="post-category" >
+            <span class="post-category">
             
               <span class="post-meta-divider">|</span>
             
@@ -348,9 +348,9 @@
 <p>？？？？</p>
 <p>所以组件能够通过<code>DI</code>机制访问到其宿主元素，<code>viewChild</code>修饰器通常是得到<code>DOM</code>元素的视图引用，对于指令也是如此，只不过指令是没有视图的，</p>
 <h2 id="TemplateRef"><a href="#TemplateRef" class="headerlink" title="TemplateRef"></a>TemplateRef</h2><p>大部分开发者应该属性<code>template</code>的概念。在应用中，能够重复使用这种<code>DOM</code>元素。在<code>html5</code>标准引入<code>template</code>前，大部分<code>template</code>都是使用<code>script</code>标签包裹，并在<code>type</code>属性中指定，例如：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">id</span>=<span class="string">"tpl"</span> <span class="attr">type</span>=<span class="string">"text/template"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">span</span>&gt;</span>I am span in template<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">id</span>=<span class="string">"tpl"</span> <span class="attr">type</span>=<span class="string">"text/template"</span>&gt;</span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">span</span>&gt;</span>I am span in template<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>这个方法有一定的缺陷，例如语义的模糊和需要手动去创建该节点。使用<code>template</code>标签后，浏览器会自动解析<code>html</code>和自动创建节点，但不去渲染它。我们可以通过<code>content</code>属性去访问其内部。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="keyword">let</span> tpl = <span class="built_in">document</span>.querySelector(<span class="string">'#tpl'</span>);</span></span><br><span class="line"><span class="javascript">    <span class="keyword">let</span> container = <span class="built_in">document</span>.querySelector(<span class="string">'.insert-after-me'</span>);</span></span><br><span class="line"><span class="undefined">    insertAfter(container, tpl.content);</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"insert-after-me"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">ng-template</span> <span class="attr">id</span>=<span class="string">"tpl"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span>&gt;</span>I am span in template<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ng-template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">let</span> tpl = <span class="built_in">document</span>.querySelector(<span class="string">'#tpl'</span>);</span></span><br><span class="line"><span class="javascript">    <span class="keyword">let</span> container = <span class="built_in">document</span>.querySelector(<span class="string">'.insert-after-me'</span>);</span></span><br><span class="line">    insertAfter(container, tpl.content);</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"insert-after-me"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">ng-template</span> <span class="attr">id</span>=<span class="string">"tpl"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span>&gt;</span>I am span in template<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ng-template</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p><code>Angular</code>针对这个，采用<code>TemplateRef</code>类实现。用法如下：<br><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">    selector: <span class="string">'sample'</span>,</span><br><span class="line">    template: <span class="string">`</span></span><br><span class="line"><span class="string">        &lt;ng-template #tpl&gt;</span></span><br><span class="line"><span class="string">            &lt;span&gt;I am span in template&lt;/span&gt;</span></span><br><span class="line"><span class="string">        &lt;/ng-template&gt;</span></span><br><span class="line"><span class="string">    `</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> SampleComponent <span class="keyword">implements</span> AfterViewInit &#123;</span><br><span class="line">    <span class="meta">@ViewChild</span>(<span class="string">"tpl"</span>) tpl: TemplateRef&lt;<span class="built_in">any</span>&gt;;</span><br><span class="line"></span><br><span class="line">    ngAfterViewInit() &#123;</span><br><span class="line">        <span class="keyword">let</span> elementRef = <span class="keyword">this</span>.tpl.elementRef;</span><br><span class="line">        <span class="comment">// outputs `template bindings=&#123;&#125;`</span></span><br><span class="line">        <span class="built_in">console</span>.log(elementRef.nativeElement.textContent);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>真正渲染后，会移除<code>template</code>元素并插入注释。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;sample&gt;</span><br><span class="line">    &lt;!--template bindings=&#123;&#125;--&gt;</span><br><span class="line">&lt;/sample&gt;</span><br></pre></td></tr></table></figure></p>
 <p><code>TemplateRef</code>本身是比较简单的类。它仅仅持有期宿主元素引用的属性<code>elementRef</code>，有一个方法<code>createEmbeddedView</code>。但是这个方法相当有用，他可以创建视图，并以<code>ViewRef</code>形式返回。</p>
@@ -482,9 +482,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image"
-                src="/images/avatar.png"
-                alt="食饼筒" />
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="食饼筒">
             
               <p class="site-author-name" itemprop="name">食饼筒</p>
               <p class="site-description motion-element" itemprop="description">do better</p>
@@ -497,7 +495,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -508,7 +506,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -572,7 +570,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -595,16 +593,16 @@
 
 <div>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<span id="busuanzi_container_site_pv" style='display:none'>
+<span id="busuanzi_container_site_pv" style="display:none">
     本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
     <span class="post-meta-divider">|</span>
 </span>
-<span id="busuanzi_container_site_uv" style='display:none'>
+<span id="busuanzi_container_site_uv" style="display:none">
     有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
 </span>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共23.9k字</span>
+  <span class="post-count">博客全站共60.9k字</span>
 </div>
 </div>
 

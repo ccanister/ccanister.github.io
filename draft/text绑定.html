@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="text绑定1textDef(checkIndex: number, ngContentIndex: number | null, staticText: string[]) checkIndex — 被绑定的是哪个node节点 staticText — 是否有动态绑定的文本，长度=staticText.length-1。这样被绑定的文本通过前后缀加起来就是完整的text。 触发Service.u">
+<meta property="og:type" content="website">
+<meta property="og:title" content="稠鱼烧才好吃">
+<meta property="og:url" content="http://yoursite.com/draft/text绑定.html">
+<meta property="og:site_name" content="稠鱼烧才好吃">
+<meta property="og:description" content="text绑定1textDef(checkIndex: number, ngContentIndex: number | null, staticText: string[]) checkIndex — 被绑定的是哪个node节点 staticText — 是否有动态绑定的文本，长度=staticText.length-1。这样被绑定的文本通过前后缀加起来就是完整的text。 触发Service.u">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-01-10T12:29:28.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="稠鱼烧才好吃">
+<meta name="twitter:description" content="text绑定1textDef(checkIndex: number, ngContentIndex: number | null, staticText: string[]) checkIndex — 被绑定的是哪个node节点 staticText — 是否有动态绑定的文本，长度=staticText.length-1。这样被绑定的文本通过前后缀加起来就是完整的text。 触发Service.u">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/draft/text绑定.html">
+
+
+
+
+
+  <title> | 稠鱼烧才好吃</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">稠鱼烧才好吃</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+    
+    
+    <div class="post-block page">
+      <header class="post-header">
+
+	<h1 class="post-title" itemprop="name headline"></h1>
+
+
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+        
+        
+          <h2 id="text绑定"><a href="#text绑定" class="headerlink" title="text绑定"></a>text绑定</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">textDef(checkIndex: <span class="built_in">number</span>, ngContentIndex: <span class="built_in">number</span> | <span class="literal">null</span>, staticText: <span class="built_in">string</span>[])</span><br></pre></td></tr></table></figure>
+<p>checkIndex — 被绑定的是哪个node节点</p>
+<p>staticText — 是否有动态绑定的文本，长度=staticText.length-1。这样被绑定的文本通过前后缀加起来就是完整的text。</p>
+<p>触发Service.updateRender方法</p>
+<h2 id="component绑定"><a href="#component绑定" class="headerlink" title="component绑定"></a>component绑定</h2><p><code>[(name)]=personName</code>属于双向绑定的语法糖，可分解为<code>[name]=personName, (nameChange)=personName=$event</code>。当子组件更新时候调用nameChange通知父组件的personName更新（尽管也是handelEvent，但是没有被ngZone代理）。当父组件更新时候，通过Service.updateDirective方法更新子组件的name属性。</p>
+<p>Q&amp;A:</p>
+<ol>
+<li><p>为什么onpush策略下，点击按钮就可以检查，宏任务就不行？</p>
+<p>因为如果是事件的话，递归的将父组件置为enable</p>
+</li>
+<li><p>编译出来的2个view作用分别是什么?</p>
+<p>这是有区别的。componet会编译成XX.component.js，而template会编译成xx.component.factory.js文件中的View_xxComponent_0，View_xxComponent_Host_0是对两者的聚合，compont将template的作为子节点，template又会和装饰器上信息再汇合，更好地解耦。</p>
+</li>
+<li><p>子组件是什么时候被实例化出来的？</p>
+<p>在执行View_xxComponent_0方法时候，具体见createViewNodes方法。</p>
+</li>
+<li><p>@ViewChild装饰器</p>
+<p>可以理解为引用查找。因为template根据#xx编译成queryDef格式，在createViewNodes方法，根据node的绑定去查找template是否存在该xx。</p>
+</li>
+<li><p>注入器</p>
+<p>根节点的注入器就是StaticInjector，可以看到在create方法时候，会添加Injector令牌。</p>
+<p>appComponent的root就是NullInjecor。</p>
+<p>startView.root.injector.get(depDef.token, NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR);适用于动态创建出来的组件的查找</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> childInjector = Injector.create(&#123;</span><br><span class="line">      providers: [&#123; provide: dynamicToken, useValue: <span class="string">"尤里克斯"</span> &#125;]</span><br><span class="line">    &#125;);</span><br><span class="line"><span class="keyword">const</span> componentFactory = <span class="keyword">this</span>.componentFactoryResolver.resolveComponentFactory(</span><br><span class="line">      DynamicComponent</span><br><span class="line">    );</span><br><span class="line"> <span class="keyword">this</span>.vcf.createComponent(componentFactory, <span class="number">0</span>, childInjector);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol start="6">
+<li><p>view编译类型</p>
+<p>不是说template里有啥就编译啥，也会根据component的添加一些节点，目前看到的是query</p>
+<ul>
+<li>#xxx - anchorDef，component中的参数查询，即@ViewChild形式查询 - queryDef</li>
+<li>div这种原生DOM和嵌套在视图中的template - elementDef</li>
+<li>指令和嵌套在视图中的component - directiveDef</li>
+<li>component的依赖 - providerDef</li>
+<li>文本 - TextDef</li>
+<li>管道 - pipeDef。</li>
+<li>该视图的template - viewRef，算是对以上类型的汇总</li>
+</ul>
+</li>
+<li><p>在管道中为什么pure:false，就会在检测周期中每次检测？</p>
+<p>因为设置了pure属性后，会在updateRenderer方法中直接编译出transform方法，而没有设置的话，会调用checkAndUpdateNode方法，检测输入的引用值是否有变化，有的话再去调用transform方法。</p>
+</li>
+<li><p>updateRenderer和updateDirective方法区别。</p>
+<p>updateRenderer是用来更新template绑定的文本，而updateDirective是用来更新绑定的子组件的属性。</p>
+</li>
+<li><p>为什么view创建出来的时候，尽管是Onpush状态，但还是可以变化检测。</p>
+<p>因为创建出来时候，状态初始化成CatInit，包含了Attached | ChecksEnabled。</p>
+</li>
+<li><p>变化检测过程。</p>
+<ul>
+<li>检测状态是否是FirstCheck，OnChange里面的FirstChange就是根据于此判断。</li>
+<li>如果view包含了动态创建出来的tmeplate，且有动态绑定文本等，那么标记其CheckProjectedViews状态</li>
+<li>查看子组件绑定的属性是否有变化，如果有的话更新其属性（但是DOM是没有发生变化的），这时候也会去调用子组件的OnChanges、OnInit和OnCheck钩子方法</li>
+<li>动态创建出来的template执行变更检测步骤</li>
+<li>更新@Content和@ContentChild修饰器绑定属性</li>
+<li>调用AfterContentInit和AfterContentChecked钩子方法</li>
+<li>更新当前绑定的文本</li>
+<li>子组件执行变更检测步骤</li>
+<li>更新@ViewChild等绑定的属性</li>
+<li>调用AfterViewInit和AfterViewChecked钩子方法。</li>
+<li>重新置回OnPush标志和反CheckProjectedViews标志</li>
+</ul>
+<p>注意点：</p>
+<ul>
+<li>OnInit、OnChanges和OnCheck是前序遍历，其他几个是后序遍历。</li>
+<li>每个钩子方法在调用前都有标志位，防止出错后不再调用。</li>
+<li>当子组件绑定属性有变化时候，会将OnPush的组件打开状态。</li>
+</ul>
+</li>
+<li><p>createViewNodes过程</p>
+<p>会把额外的信息放在view.nodes属性下面，比如element对应的DOM节点</p>
+<ul>
+<li>如果是component类型，那么取得其父节点的element，方便日后可插入节点和文本等。</li>
+<li>element类型：<ul>
+<li>创建节点并插入</li>
+<li>如果是component类型，创建其viewData。</li>
+<li>监听事件（包装了事件，以便于变更检测）</li>
+<li>如果有ng-template和其引用，创建TemplateRef_对象</li>
+<li>如果有@ViewChild({read: ViewContainer})，创建ViewContainerRef_对象</li>
+</ul>
+</li>
+<li>text类型：创建文本并插入</li>
+<li>provider，即依赖注入，创建其对象。如果component提供了provider，但是没有在构造器中注入，那么会被设置成LazyProvider，即使子组件有用到。没有想出来allProviders和publicProviders区别</li>
+<li>pipe。如果有依赖的话，会从被注入的组件中查找provider</li>
+<li>direcitve：创建对象。如果是compoent，将template的执行环境指向该对象。如果有output属性，那么就订阅它。执行方法和事件监听类似。在销毁节点的时候，都会取消订阅</li>
+<li>query：创建QueryList对象</li>
+<li>子组件调用createViewNodes类型</li>
+<li>初始化QueryList属性</li>
+</ul>
+</li>
+</ol>
+
+        
+      </div>
+      
+      
+      
+    </div>
+    
+    
+    
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="食饼筒">
+            
+              <p class="site-author-name" itemprop="name">食饼筒</p>
+              <p class="site-description motion-element" itemprop="description">do better</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#text绑定"><span class="nav-number">1.</span> <span class="nav-text">text绑定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#component绑定"><span class="nav-number">2.</span> <span class="nav-text">component绑定</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">食饼筒</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+<div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style="display:none">
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style="display:none">
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共60.9k字</span>
+</div>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
