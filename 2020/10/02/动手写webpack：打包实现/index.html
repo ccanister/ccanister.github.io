@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="动手写webpack：打包实现在大型应用中，模块化是必不可少的，总不能将代码都写在一个文件中。在js诞生之初，作用只是作为简单的脚本，所以并没有模块化规范这一说法。到后来单页应用等出现，模块化是必不可少的。在这之中涌现了几种实现方式，其中commonjs是node的实现方式，它是按照同步去加载模块，所以不适用于浏览器。es6提出了ES Modules的语言标准，使用import等关键字实现。 在模">
+<meta name="description" content="动手写webpack：打包实现动手写webpack：打包实现在大型应用中，模块化是必不可少的，总不能将代码都写在一个文件中。在js诞生之初，作用只是作为简单的脚本，所以并没有模块化规范这一说法。到后来单页应用等出现，模块化是必不可少的。在这之中涌现了几种实现方式，其中commonjs是node的实现方式，它是按照同步去加载模块，所以不适用于浏览器。es6提出了ES Modules的语言标准，使用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="稠鱼烧才好吃">
 <meta property="og:url" content="http://yoursite.com/2020/10/02/动手写webpack：打包实现/index.html">
 <meta property="og:site_name" content="稠鱼烧才好吃">
-<meta property="og:description" content="动手写webpack：打包实现在大型应用中，模块化是必不可少的，总不能将代码都写在一个文件中。在js诞生之初，作用只是作为简单的脚本，所以并没有模块化规范这一说法。到后来单页应用等出现，模块化是必不可少的。在这之中涌现了几种实现方式，其中commonjs是node的实现方式，它是按照同步去加载模块，所以不适用于浏览器。es6提出了ES Modules的语言标准，使用import等关键字实现。 在模">
+<meta property="og:description" content="动手写webpack：打包实现动手写webpack：打包实现在大型应用中，模块化是必不可少的，总不能将代码都写在一个文件中。在js诞生之初，作用只是作为简单的脚本，所以并没有模块化规范这一说法。到后来单页应用等出现，模块化是必不可少的。在这之中涌现了几种实现方式，其中commonjs是node的实现方式，它是按照同步去加载模块，所以不适用于浏览器。es6提出了ES Modules的语言标准，使用">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-10-02T06:58:32.216Z">
+<meta property="og:updated_time" content="2020-10-08T10:44:55.827Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="稠鱼烧才好吃">
-<meta name="twitter:description" content="动手写webpack：打包实现在大型应用中，模块化是必不可少的，总不能将代码都写在一个文件中。在js诞生之初，作用只是作为简单的脚本，所以并没有模块化规范这一说法。到后来单页应用等出现，模块化是必不可少的。在这之中涌现了几种实现方式，其中commonjs是node的实现方式，它是按照同步去加载模块，所以不适用于浏览器。es6提出了ES Modules的语言标准，使用import等关键字实现。 在模">
+<meta name="twitter:description" content="动手写webpack：打包实现动手写webpack：打包实现在大型应用中，模块化是必不可少的，总不能将代码都写在一个文件中。在js诞生之初，作用只是作为简单的脚本，所以并没有模块化规范这一说法。到后来单页应用等出现，模块化是必不可少的。在这之中涌现了几种实现方式，其中commonjs是node的实现方式，它是按照同步去加载模块，所以不适用于浏览器。es6提出了ES Modules的语言标准，使用">
 
 
 
@@ -309,9 +309,10 @@
       
 
       
-        <h1 id="动手写webpack：打包实现"><a href="#动手写webpack：打包实现" class="headerlink" title="动手写webpack：打包实现"></a>动手写webpack：打包实现</h1><p>在大型应用中，模块化是必不可少的，总不能将代码都写在一个文件中。在js诞生之初，作用只是作为简单的脚本，所以并没有模块化规范这一说法。到后来单页应用等出现，模块化是必不可少的。在这之中涌现了几种实现方式，其中commonjs是node的实现方式，它是按照同步去加载模块，所以不适用于浏览器。es6提出了ES Modules的语言标准，使用import等关键字实现。</p>
+        <hr>
+<h2 id="动手写webpack：打包实现"><a href="#动手写webpack：打包实现" class="headerlink" title="动手写webpack：打包实现"></a>动手写webpack：打包实现</h2><h1 id="动手写webpack：打包实现-1"><a href="#动手写webpack：打包实现-1" class="headerlink" title="动手写webpack：打包实现"></a>动手写webpack：打包实现</h1><p>在大型应用中，模块化是必不可少的，总不能将代码都写在一个文件中。在js诞生之初，作用只是作为简单的脚本，所以并没有模块化规范这一说法。到后来单页应用等出现，模块化是必不可少的。在这之中涌现了几种实现方式，其中commonjs是node的实现方式，它是按照同步去加载模块，所以不适用于浏览器。es6提出了ES Modules的语言标准，使用import等关键字实现。</p>
 <p>在模块化的道路上，低版本的浏览器却是拦路虎。为了在低版本浏览器可以使用模块化规范，我们需要将其转化成es5语法才能运行。于是涌现了无数的打包工具，其中脱颖而出的就是webpack，Angular底层打包也是利用了webpack工具。</p>
-<!-- readMore -->
+<a id="more"></a>
 <p>所以webpack的学习是必不可少的，从另一面来说，如何实现打包工具也是作为前端该学习的。我在学习的时候，其实并没有看wepack源码，因为它太庞大了。我只是看了它打包出来的代码和文档，然后再去实现，这也是一种学习方法。</p>
 <p>我们最后需要实现的能够兼容cjs和ES Modules两种打包方式、import方式的异步加载和loader的加载，这篇先实现第一步的功能。</p>
 <h2 id="bundle-js"><a href="#bundle-js" class="headerlink" title="bundle.js"></a>bundle.js</h2><p>首先思考cjs规范打包出来的文件是什么样子的，例如</p>
@@ -566,7 +567,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#动手写webpack：打包实现"><span class="nav-number">1.</span> <span class="nav-text">动手写webpack：打包实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#bundle-js"><span class="nav-number">1.1.</span> <span class="nav-text">bundle.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AST"><span class="nav-number">1.2.</span> <span class="nav-text">AST</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模块路径"><span class="nav-number">1.3.</span> <span class="nav-text">模块路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拼接bundle-js"><span class="nav-number">1.4.</span> <span class="nav-text">拼接bundle.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">1.5.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#动手写webpack：打包实现"><span class="nav-number">1.</span> <span class="nav-text">动手写webpack：打包实现</span></a></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#动手写webpack：打包实现-1"><span class="nav-number"></span> <span class="nav-text">动手写webpack：打包实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#bundle-js"><span class="nav-number">1.</span> <span class="nav-text">bundle.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AST"><span class="nav-number">2.</span> <span class="nav-text">AST</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模块路径"><span class="nav-number">3.</span> <span class="nav-text">模块路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拼接bundle-js"><span class="nav-number">4.</span> <span class="nav-text">拼接bundle.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></li></div>
             
 
           </div>
