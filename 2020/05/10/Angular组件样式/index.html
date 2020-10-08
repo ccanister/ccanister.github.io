@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近遇到了在动态创建模板时候，样式无法附加上去的问题。研究了一下，发现和Angular视图封装模式有关，我们先来模拟一下这个情况：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Angular组件样式">
+<meta property="og:url" content="http://yoursite.com/2020/05/10/Angular组件样式/index.html">
+<meta property="og:site_name" content="稠鱼烧才好吃">
+<meta property="og:description" content="最近遇到了在动态创建模板时候，样式无法附加上去的问题。研究了一下，发现和Angular视图封装模式有关，我们先来模拟一下这个情况：">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2020/05/10/Angular组件样式/zhaorenjie/Documents/blog/source/_posts/Angular组件样式/无法渲染msg.jpeg">
+<meta property="og:updated_time" content="2020-10-08T10:50:52.221Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Angular组件样式">
+<meta name="twitter:description" content="最近遇到了在动态创建模板时候，样式无法附加上去的问题。研究了一下，发现和Angular视图封装模式有关，我们先来模拟一下这个情况：">
+<meta name="twitter:image" content="http://yoursite.com/2020/05/10/Angular组件样式/zhaorenjie/Documents/blog/source/_posts/Angular组件样式/无法渲染msg.jpeg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/10/Angular组件样式/">
+
+
+
+
+
+  <title>Angular组件样式 | 稠鱼烧才好吃</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">稠鱼烧才好吃</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/10/Angular组件样式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="食饼筒">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="稠鱼烧才好吃">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Angular组件样式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-10T00:00:00+08:00">
+                2020-05-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Angular/" itemprop="url" rel="index">
+                    <span itemprop="name">Angular</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近遇到了在动态创建模板时候，样式无法附加上去的问题。研究了一下，发现和Angular视图封装模式有关，我们先来模拟一下这个情况：</p>
+<a id="more"></a>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// html模板</span></span><br><span class="line">&lt;div <span class="keyword">class</span>=<span class="string">"container"</span>&gt;</span><br><span class="line">	&lt;ng-template #container&gt;&lt;<span class="regexp">/ng-template&gt;</span></span><br><span class="line"><span class="regexp">&lt;/</span>div&gt;</span><br><span class="line">&lt;ng-template #msgTpl&gt;</span><br><span class="line">	&lt;div <span class="keyword">class</span>=<span class="string">"msg"</span>&gt;&lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">&lt;/</span>ng-template&gt;</span><br><span class="line"><span class="comment">// component</span></span><br><span class="line"><span class="meta">@ViewChild</span>(<span class="string">"msgTpl"</span>) <span class="keyword">private</span> msgTpl: TemplateRef&lt;<span class="built_in">any</span>&gt;;</span><br><span class="line"><span class="meta">@ViewChild</span>(<span class="string">"container"</span>, &#123; read: ViewContainerRef &#125;)</span><br><span class="line"><span class="keyword">private</span> container: ViewContainerRef;</span><br><span class="line"></span><br><span class="line">createMsg() &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; container, msgTpl &#125; = <span class="keyword">this</span>;</span><br><span class="line">  <span class="keyword">const</span> view = container.createEmbeddedView(msgTpl);</span><br><span class="line">  view.rootNodes[<span class="number">0</span>].innerHTML = <span class="string">`&lt;span class="timestamp"&gt;&lt;b&gt;14:17:52&lt;/b&gt;123 `</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>container是放入模板的容器位置，msgTpl就是模板。创建模板时，我们直接对<code>div</code>节点赋予了html字符串，然而我在css里面定义了<code>timestamp</code>类的背景色，并未生效。具体代码可看<a href="https://stackblitz.com/edit/angular-version-79muv9" target="_blank" rel="noopener">这里</a>。</p>
+<h2 id="视图封装模式"><a href="#视图封装模式" class="headerlink" title="视图封装模式"></a>视图封装模式</h2><p>根据Angular文档，组件的样式封装一共有三种：</p>
+<ol>
+<li><code>Native</code>：使用浏览器原生的<code>Shadow DOM</code>，这种模式下，外界无法入侵组件，组件的样式也无法影响到外界。</li>
+<li><code>None</code>：不再封装样式，就和原始开发模式一样，相同的选择器样式会互相覆盖。</li>
+<li><code>Emulated</code>：这也是默认封装模式，组件样式无法影响到外界，但是外界样式可以入侵组件。</li>
+</ol>
+<p>可以在组件元数据中的<code>encapsulation</code> 属性来设置组件封装模式：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">encapsulation: ViewEncapsulation.Native</span><br></pre></td></tr></table></figure>
+<p>我们以上述例子着重来分析第三种封装模式，可以看到<code>div</code>节点的选择器多了一些东西，而<code>timestamp</code>并无变化。</p>
+<p><img src="/2020/05/10/Angular组件样式/zhaorenjie/Documents/blog/source/_posts/Angular组件样式/无法渲染msg.jpeg" alt="无法渲染msg" style="zoom: 50%;"></p>
+<p>这说明仿真模式其实是对DOM节点设置了属性，属性名采用了自增ID以防止名字的冲突。那么为什么<code>timestamp</code>类并后面没有紧跟属性选择器呢？思考一下，Angular是需要经过编译的，样式代码应该在编译过程中会被替换成<code>_ngcontent-xxx</code>格式，而HTML模板编译出来的组件工厂 <code>xx.ngfactory.js</code>会在内部创建节点的过程中设置相同名称的属性。但是我们动态创建的模板直接对html属性赋值字符串的，并没有走Angular内部的创建节点过程，所以导致节点并没有设置属性。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 编译出来的css --&gt;</span></span><br><span class="line">.msg[_ngcontent-xx] &#123;</span><br><span class="line">	.timestamp &#123;</span><br><span class="line">		xxx</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">&lt;!-- html动态生成后 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">_ngcontent-xxx</span> <span class="attr">class</span>=<span class="string">"msg"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 赋值了html字符串后,没有设置上属性 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">_ngcontent-xxx</span> <span class="attr">class</span>=<span class="string">"msg"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"timestamp"</span>&gt;</span>xx<span class="tag">&lt;/<span class="name">span</span>&gt;</span>	</span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>那么该如何解决这个问题呢？我们再来想平时使用的<code>:host</code>选择器和<code>::ng-deep</code>伪类的作用，当加上<code>:host ::ng-deep</code>选择器后，如果子组件也是仿真模式，那么父组件只要样式权重较大就可以覆盖子组件的样式。而如果直接以<code>::ng-deep</code> 伪类的选择器，按照Angular文档的解释，会完全禁止css样式的包装，从而变成全局样式。我们给msg类分别添加两种选择器看看。</p>
+<p>可以看到组件标签会设置<code>_nghost-xxx</code>属性，而子节点都设置了<code>_ngcontent-xxx</code>属性。当带有<code>:host</code>样式时候，样式选择器也会添加属性前缀，而不再是<code>_ngcontent-xx</code>属性选择器，所以父组件才能入侵子组件的样式。而<code>:ng-deep</code>则完全没有变化，没有添加任何选择器，这样的缺点很明显，失去了封装意味着冲突，但是在弹层之类的组件却很有效。</p>
+<p>回到之前的问题，<code>timestamp</code>类样式无法附加上，因为他没有<code>_ngcontent</code>前缀。但是刚刚分析<code>::ng-deep</code> 伪类不会对其包装，所以我们只需要在<code>timestamp</code>类添加<code>::ng-deep</code>前缀样式即可生效，验证后成功！</p>
+<p>完整代码请看<a href="https://stackblitz.com/edit/angular-version-jfm2fw" target="_blank" rel="noopener">这里</a>。</p>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><p>下面我们来看下源码，首先搜索<code>ngcontent</code>关键词，发现了在<code>dom_renderer</code>文件中有<code>_ngcontent-${COMPONENT_VARIABLE}</code>的正则，并且代码也有和封装模式的枚举有关，看来要找的就是这个文件了。其次，我们对css文件编译，使用<code>.node_modules/.bin/ngc</code>就可以得到组件工厂文件了看一下不同的选择器产生的结果：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">// 源代码																			// 编译结果</span><br><span class="line">.container &#123;																	.container[_ngcontent-%COMP%] &#123;&#125;</span><br><span class="line">	<span class="selector-tag">xx</span>											<span class="selector-tag">----</span>&gt;										<span class="selector-tag">xx</span></span><br><span class="line">&#125;																							&#125;</span><br><span class="line">:host ::ng-deep &#123;															.container [_ngcontent-%COMP%] &#123;</span><br><span class="line">	.container &#123;					  ----&gt;										.timestamp &#123;&#125;</span><br><span class="line">		<span class="selector-class">.timstamp</span> &#123;&#125;															&#125;		</span><br><span class="line">	&#125;											</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-pseudo">:host</span> &#123;</span><br><span class="line">	.container &#123;						----&gt;								.container [_ngcontent-%COMP%] &#123;</span><br><span class="line">		<span class="selector-class">.timstamp</span> &#123;&#125;																	<span class="selector-class">.timestamp</span> <span class="selector-attr">[_ngcontent-%COMP%]</span> &#123;&#125;</span><br><span class="line">	&#125;																						&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-pseudo">::ng-deep</span> &#123;</span><br><span class="line">	.container &#123;&#125;					  ----&gt;								.container &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">:host-context(p) &#123;														p [_nghost-%COMP%] &#123;</span><br><span class="line">  <span class="selector-class">.container</span> &#123;&#125;						<span class="selector-tag">----</span>&gt;									<span class="selector-class">.container</span> &#123;&#125;</span><br><span class="line">  &#125;																						&#125;</span><br></pre></td></tr></table></figure>
+<p>我们都知道Angular不提倡使用原生的方法去操作DOM节点（DOM节点也不建议操作），而是调用<code>renderer2</code>对象去操作，它里面的方法基本覆盖了常用操作，如设置属性、样式和类名等等。这是因为在不同的平台，DOM的操作的api并不是一样的，比如在浏览器端可以直接使用document，而在服务端渲染时并没有document，而是使用了<code>domino</code>库模拟了document。所以如果需要跨平台，最好是调用<code>renderer2</code>对象操作，同理还有<code>DOCUMENT</code>对象等。</p>
+<p>不过我们今天的关注并不在此，因为我们只需要看浏览器端的调用即可。Renderer2只会在创建组件的时候才会调用，子节点的创建会调用内部的<code>createElement</code>方法。在<code>DomRendererFactory2</code>类中使用了策略模式根据不同的类型创建Renderer2。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> ViewEncapsulation.Emulated: &#123;</span><br><span class="line">  <span class="keyword">let</span> renderer = <span class="keyword">this</span>.rendererByCompId.get(<span class="keyword">type</span>.id);</span><br><span class="line">  <span class="keyword">if</span> (!renderer) &#123;</span><br><span class="line">    renderer = <span class="keyword">new</span> EmulatedEncapsulationDomRenderer2(</span><br><span class="line">      <span class="keyword">this</span>.eventManager, <span class="keyword">this</span>.sharedStylesHost, <span class="keyword">type</span>, <span class="keyword">this</span>.appId);</span><br><span class="line">    <span class="keyword">this</span>.rendererByCompId.set(<span class="keyword">type</span>.id, renderer);</span><br><span class="line">  &#125;</span><br><span class="line">  (&lt;EmulatedEncapsulationDomRenderer2&gt;renderer).applyToHost(element);</span><br><span class="line">  <span class="keyword">return</span> renderer;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> EmulatedEncapsulationDomRenderer2&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span></span><br><span class="line"><span class="params">      eventManager: EventManager, sharedStylesHost: DomSharedStylesHost,</span></span><br><span class="line"><span class="params">      <span class="keyword">private</span> component: RendererType2, appId: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">    <span class="keyword">super</span>(eventManager);</span><br><span class="line">    <span class="keyword">const</span> styles = flattenStyles(appId + <span class="string">'-'</span> + component.id, component.styles, []);</span><br><span class="line">    sharedStylesHost.addStyles(styles);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.contentAttr = shimContentAttribute(appId + <span class="string">'-'</span> + component.id);</span><br><span class="line">    <span class="keyword">this</span>.hostAttr = shimHostAttribute(appId + <span class="string">'-'</span> + component.id);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>内部有个缓存，键值是组件的id。编译器生成出工厂文件就会带有id，也可以理解为是自增ID。没有击中缓存的话，就会实例化<code>EmulatedEncapsulationDomRenderer2</code>对象，再放入缓存中。在构造器中，利用正则取得组件的<code>host</code>和<code>content</code>的名称，也就是之前所说nghost-xxx和ngcontent-xxx的后缀。有了host名称后，就可以设置组件属性。然后再用正则替换样式，并创建style标签，添加到head标签内。我们可以看到仿真对象的<code>createElement</code>方法，它会先创建DOM子节点，再对子节点设置content名称属性。这样就验证了我们之前的想法。</p>
+<p>最后来看影子DOM的封装，就是调用了浏览器的<code>attachShadow</code>方法实现。它不缓存组件的rendere2对象，因为每次创建影子DOM，都会产生新的影子节点，如果缓存就会产生冲突。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过以上我们可以学习到Angular的视图封装模式：</p>
+<ol>
+<li>通过编译改变了带有特定选择器如:host的样式代码。</li>
+<li>对组件标签设置nghost属性，对组件内部节点设置ngcontent属性。</li>
+</ol>
+<p>回到之前的问题，其实我们还有一种方法修正，可以创建动态组件，再在父组件中设置</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-pseudo">:host</span> <span class="selector-pseudo">::ng-deep</span> &#123;</span><br><span class="line">	.timestamp &#123;...&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为只会改变最外层的样式代码，timestamp仍然会附加到子组件样式上。具体代码请看<a href="https://stackblitz.com/edit/angular-version-istypu" target="_blank" rel="noopener">这里</a>。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/20/从zepto说起/" rel="next" title="从zepto说起">
+                <i class="fa fa-chevron-left"></i> 从zepto说起
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/08/01/动手写webpack：打包实现/" rel="prev" title="动手写webpack：打包实现">
+                动手写webpack：打包实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="食饼筒">
+            
+              <p class="site-author-name" itemprop="name">食饼筒</p>
+              <p class="site-description motion-element" itemprop="description">do better</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#视图封装模式"><span class="nav-number">1.</span> <span class="nav-text">视图封装模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源码分析"><span class="nav-number">2.</span> <span class="nav-text">源码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">食饼筒</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+<div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" style="display:none">
+    本站总访问量 <span id="busuanzi_value_site_pv"></span> 次
+    <span class="post-meta-divider">|</span>
+</span>
+<span id="busuanzi_container_site_uv" style="display:none">
+    有<span id="busuanzi_value_site_uv"></span>人看过我的博客啦
+</span>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共60.8k字</span>
+</div>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

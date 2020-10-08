@@ -79,12 +79,12 @@
 
 
 
-<meta name="description" content="理解Angular结构指令此篇文章翻译自understanding-angular-structural-directives. 在这篇文章中，我们将会利用自定义的结构指令创建轮播组件。我们先探讨Angular提供的微语法，再利用其领域专用语言描述指令的输入。">
+<meta name="description" content="此篇文章翻译自understanding-angular-structural-directives. 在这篇文章中，我们将会利用自定义的结构指令创建轮播组件。我们先探讨Angular提供的微语法，再利用其领域专用语言描述指令的输入。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="原型继承是如何实现的">
+<meta property="og:title" content="理解Angular结构指令">
 <meta property="og:url" content="http://yoursite.com/2018/11/20/理解Angular结构指令/index.html">
 <meta property="og:site_name" content="稠鱼烧才好吃">
-<meta property="og:description" content="理解Angular结构指令此篇文章翻译自understanding-angular-structural-directives. 在这篇文章中，我们将会利用自定义的结构指令创建轮播组件。我们先探讨Angular提供的微语法，再利用其领域专用语言描述指令的输入。">
+<meta property="og:description" content="此篇文章翻译自understanding-angular-structural-directives. 在这篇文章中，我们将会利用自定义的结构指令创建轮播组件。我们先探讨Angular提供的微语法，再利用其领域专用语言描述指令的输入。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2018/11/20/理解Angular结构指令/zhaorenjie/Documents/blog/source/_posts/理解Angular结构指令/demo.gif">
 <meta property="og:image" content="http://yoursite.com/2018/11/20/理解Angular结构指令/zhaorenjie/Documents/blog/source/_posts/理解Angular结构指令/directive.png">
@@ -96,10 +96,10 @@
 <meta property="og:image" content="http://yoursite.com/2018/11/20/理解Angular结构指令/zhaorenjie/Documents/blog/source/_posts/理解Angular结构指令/auto.gif">
 <meta property="og:image" content="http://yoursite.com/2018/11/20/理解Angular结构指令/zhaorenjie/Documents/blog/source/_posts/理解Angular结构指令/button.gif">
 <meta property="og:image" content="http://yoursite.com/2018/11/20/理解Angular结构指令/zhaorenjie/Documents/blog/source/_posts/理解Angular结构指令/image.gif">
-<meta property="og:updated_time" content="2020-10-02T07:28:08.446Z">
+<meta property="og:updated_time" content="2020-10-08T10:53:49.400Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="原型继承是如何实现的">
-<meta name="twitter:description" content="理解Angular结构指令此篇文章翻译自understanding-angular-structural-directives. 在这篇文章中，我们将会利用自定义的结构指令创建轮播组件。我们先探讨Angular提供的微语法，再利用其领域专用语言描述指令的输入。">
+<meta name="twitter:title" content="理解Angular结构指令">
+<meta name="twitter:description" content="此篇文章翻译自understanding-angular-structural-directives. 在这篇文章中，我们将会利用自定义的结构指令创建轮播组件。我们先探讨Angular提供的微语法，再利用其领域专用语言描述指令的输入。">
 <meta name="twitter:image" content="http://yoursite.com/2018/11/20/理解Angular结构指令/zhaorenjie/Documents/blog/source/_posts/理解Angular结构指令/demo.gif">
 
 
@@ -136,7 +136,7 @@
 
 
 
-  <title>原型继承是如何实现的 | 稠鱼烧才好吃</title>
+  <title>理解Angular结构指令 | 稠鱼烧才好吃</title>
   
 
 
@@ -270,7 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">原型继承是如何实现的</h1>
+          <h1 class="post-title" itemprop="name headline">理解Angular结构指令</h1>
         
 
         <div class="post-meta">
@@ -342,7 +342,7 @@
       
 
       
-        <h1 id="理解Angular结构指令"><a href="#理解Angular结构指令" class="headerlink" title="理解Angular结构指令"></a>理解Angular结构指令</h1><p>此篇文章翻译自<a href="https://netbasal.com/understanding-angular-structural-directives-659acd0f67e" target="_blank" rel="noopener">understanding-angular-structural-directives</a>.</p>
+        <p>此篇文章翻译自<a href="https://netbasal.com/understanding-angular-structural-directives-659acd0f67e" target="_blank" rel="noopener">understanding-angular-structural-directives</a>.</p>
 <p>在这篇文章中，我们将会利用自定义的结构指令创建轮播组件。我们先探讨Angular提供的微语法，再利用其领域专用语言描述指令的输入。</p>
 <a id="more"></a>
 <p>完整理想的效果如下图所示:<br><img src="/2018/11/20/理解Angular结构指令/zhaorenjie/Documents/blog/source/_posts/理解Angular结构指令/demo.gif" alt="demo"></p>
@@ -537,7 +537,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -581,7 +581,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#理解Angular结构指令"><span class="nav-number">1.</span> <span class="nav-text">理解Angular结构指令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#模板指令微语法"><span class="nav-number">1.1.</span> <span class="nav-text">模板指令微语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#领域专用术语（DSL）"><span class="nav-number">1.2.</span> <span class="nav-text">领域专用术语（DSL）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#上下文变量"><span class="nav-number">1.3.</span> <span class="nav-text">上下文变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">1.4.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动播放"><span class="nav-number">1.5.</span> <span class="nav-text">自动播放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结构指令还是组件？"><span class="nav-number">1.6.</span> <span class="nav-text">结构指令还是组件？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充"><span class="nav-number">1.7.</span> <span class="nav-text">补充</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#模板指令微语法"><span class="nav-number">1.</span> <span class="nav-text">模板指令微语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#领域专用术语（DSL）"><span class="nav-number">2.</span> <span class="nav-text">领域专用术语（DSL）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#上下文变量"><span class="nav-number">3.</span> <span class="nav-text">上下文变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">4.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动播放"><span class="nav-number">5.</span> <span class="nav-text">自动播放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结构指令还是组件？"><span class="nav-number">6.</span> <span class="nav-text">结构指令还是组件？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充"><span class="nav-number">7.</span> <span class="nav-text">补充</span></a></li></ol></div>
             
 
           </div>
@@ -633,7 +633,7 @@
 </span>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共60.9k字</span>
+  <span class="post-count">博客全站共60.8k字</span>
 </div>
 </div>
 
