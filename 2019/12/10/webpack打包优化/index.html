@@ -79,22 +79,24 @@
 
 
 
-<meta name="description" content="最近发现打包后的js文件日益增大，想着之前有看过webpack的优化文章，能不能再次用上。可惜Angular在v6的时候不再支持自定义配置文件，所以能做的事是有限的。 查看文件体积分布webpack有多种方法能查看打包后的体积分布，比较直观化的是webpack-bundle-analyzer插件，能图形化的显示打包后的文件大小以及由哪些模块组成。使用方法比较简单： 12npm install we">
+<meta name="description" content="最近发现打包后的js文件日益增大，想着之前有看过webpack的优化文章，能不能再次用上。可惜Angular在v6的时候不再支持自定义配置文件，所以能做的事是有限的。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="webpack打包优化">
 <meta property="og:url" content="http://yoursite.com/2019/12/10/webpack打包优化/index.html">
 <meta property="og:site_name" content="稠鱼烧才好吃">
-<meta property="og:description" content="最近发现打包后的js文件日益增大，想着之前有看过webpack的优化文章，能不能再次用上。可惜Angular在v6的时候不再支持自定义配置文件，所以能做的事是有限的。 查看文件体积分布webpack有多种方法能查看打包后的体积分布，比较直观化的是webpack-bundle-analyzer插件，能图形化的显示打包后的文件大小以及由哪些模块组成。使用方法比较简单： 12npm install we">
+<meta property="og:description" content="最近发现打包后的js文件日益增大，想着之前有看过webpack的优化文章，能不能再次用上。可惜Angular在v6的时候不再支持自定义配置文件，所以能做的事是有限的。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2019/12/10/webpack打包优化/zhaorenjie/Desktop/optimize/webpack-bundle-analyzer.png">
-<meta property="og:image" content="http://yoursite.com/2019/12/10/webpack打包优化/zhaorenjie/Desktop/optimize/采用min后的script.png">
-<meta property="og:image" content="http://yoursite.com/2019/12/10/webpack打包优化/zhaorenjie/Desktop/optimize/引入了全部date-fns.png">
-<meta property="og:image" content="http://yoursite.com/2019/12/10/webpack打包优化/zhaorenjie/Desktop/optimize/按需引入的date-fns.png">
-<meta property="og:updated_time" content="2020-10-08T10:52:34.266Z">
+<meta property="og:image" content="http://yoursite.com/2019/12/10/webpack打包优化/zhaorenjie/Documents/blog/source/_posts/webpack打包优化/webpack-bundle-analyzer.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/10/webpack打包优化/zhaorenjie/Documents/blog/source/_posts/webpack打包优化/采用min后的script.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/10/webpack打包优化/zhaorenjie/Documents/blog/source/_posts/webpack打包优化/引入了全部date-fns.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/10/webpack打包优化/zhaorenjie/Documents/blog/source/_posts/webpack打包优化/按需引入的date-fns.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/10/webpack打包优化/zhaorenjie/Documents/blog/source/_posts/webpack打包优化/优化后.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/10/webpack打包优化/zhaorenjie/Documents/blog/source/_posts/webpack打包优化/优化后.png">
+<meta property="og:updated_time" content="2020-10-08T11:01:08.432Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="webpack打包优化">
-<meta name="twitter:description" content="最近发现打包后的js文件日益增大，想着之前有看过webpack的优化文章，能不能再次用上。可惜Angular在v6的时候不再支持自定义配置文件，所以能做的事是有限的。 查看文件体积分布webpack有多种方法能查看打包后的体积分布，比较直观化的是webpack-bundle-analyzer插件，能图形化的显示打包后的文件大小以及由哪些模块组成。使用方法比较简单： 12npm install we">
-<meta name="twitter:image" content="http://yoursite.com/2019/12/10/webpack打包优化/zhaorenjie/Desktop/optimize/webpack-bundle-analyzer.png">
+<meta name="twitter:description" content="最近发现打包后的js文件日益增大，想着之前有看过webpack的优化文章，能不能再次用上。可惜Angular在v6的时候不再支持自定义配置文件，所以能做的事是有限的。">
+<meta name="twitter:image" content="http://yoursite.com/2019/12/10/webpack打包优化/zhaorenjie/Documents/blog/source/_posts/webpack打包优化/webpack-bundle-analyzer.png">
 
 
 
@@ -337,23 +339,25 @@
 
       
         <p>最近发现打包后的js文件日益增大，想着之前有看过webpack的优化文章，能不能再次用上。可惜Angular在v6的时候不再支持自定义配置文件，所以能做的事是有限的。</p>
+<a id="more"></a>
 <h2 id="查看文件体积分布"><a href="#查看文件体积分布" class="headerlink" title="查看文件体积分布"></a>查看文件体积分布</h2><p>webpack有多种方法能查看打包后的体积分布，比较直观化的是<code>webpack-bundle-analyzer</code>插件，能图形化的显示打包后的文件大小以及由哪些模块组成。使用方法比较简单：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install webpack-bundle-analyzer</span><br><span class="line">ng build --prod --stats-json &amp;&amp; webpack-bundle-analyzer dist/stats.json</span><br></pre></td></tr></table></figure>
 <p>项目打包后的分布如下：</p>
-<p><img src="/2019/12/10/webpack打包优化/zhaorenjie/Desktop/optimize/webpack-bundle-analyzer.png" alt="webpack-bundle-analyzer"></p>
+<p><img src="/2019/12/10/webpack打包优化/zhaorenjie/Documents/blog/source/_posts/webpack打包优化/webpack-bundle-analyzer.png" alt="webpack-bundle-analyzer" style="zoom:50%;"></p>
 <p>可以看到比较大的文件是main文件和scripts文件，这两个在首页时都会加载，所以尤其需要优化。其他的文件都是懒加载的模块，但都无法分析内部模块，所以还需要借助另一个插件<code>source-map-explorer</code>，它可以解析每个文件的模块分布、大小和占比等，使用方法如下：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install -g source-map-explorer </span><br><span class="line">ng build --prod --source-map</span><br><span class="line">source-map-explorer dist<span class="comment">/*.js</span></span><br></pre></td></tr></table></figure>
 <p>最后一步需要指定要分析的文件，不能全部一口气分析完。这里涉及到项目内部模块，就不放图了。</p>
 <h2 id="体积优化"><a href="#体积优化" class="headerlink" title="体积优化"></a>体积优化</h2><ol>
 <li><p>scripts的优化：scripts会打包没有直接导入到项目中，但第三方库又依赖的包，往往写在angular.json文件中的assets里。比如说ng-alian脚手架的动态表单，他依赖了ajv库验证schema是否正确，但我们导入模块的时候只会导入动态表单的库，不会把ajv也引入。因为我们并不需要直接和ajv打交道，而是动态表单引用了它。如果我们不在assets里引入，项目就会报找不到依赖的错误。</p>
-<p>所以scripts的库往往都是第三方库，可以通过CDN引入。这里有个权衡，还是ajv库它的大小只有二十几kb，真的有必要通过CDN去引入吗？webpack4拆分公共代码中的默认配置有一项就是公共的chunk需要大于30kb，才会拆分出新的chunk。因为尽管缩小了原先文件的大小，但是多了网络请求，有时候并不一定值得，尤其同一域名下并发请求数是由限制的。所以我们也可以规定只有30kb的文件才通过CDN引入。优化后的scripts文件大小：<img src="/2019/12/10/webpack打包优化/zhaorenjie/Desktop/optimize/采用min后的script.png" alt="采用min后的script"></p>
+<p>所以scripts的库往往都是第三方库，可以通过CDN引入。这里有个权衡，还是ajv库它的大小只有二十几kb，真的有必要通过CDN去引入吗？webpack4拆分公共代码中的默认配置有一项就是公共的chunk需要大于30kb，才会拆分出新的chunk。因为尽管缩小了原先文件的大小，但是多了网络请求，有时候并不一定值得，尤其同一域名下并发请求数是由限制的。所以我们也可以规定只有30kb的文件才通过CDN引入。优化后的scripts文件大小：</p>
+<p><img src="/2019/12/10/webpack打包优化/zhaorenjie/Documents/blog/source/_posts/webpack打包优化/采用min后的script.png" alt="采用min后的script" style="zoom: 33%;"></p>
 </li>
-<li><p>assets目录内的导入改成http请求：assets目录属于静态目录，放置css、json等静态文件。但是如果我们直接用es规范去导入json等文件，就会把它打包进来。其实更好的方式应是http请求文件，因为都是本地文件，没有消耗。</p>
+<li><p>assets目录内的导入改成http请求：assets目录属于静态目录，放置css、json等静态文件。但是如果我们直接用es规范去导入json等文件，就会把它打包进来。其实更好的方式应是http请求文件，因为都是本地文件，没不会消耗带宽。</p>
 </li>
 <li><p>按需导入：这个也比较常见，比如现在在用的date-fns库，没有注意使用习惯，就直接<code>import {format} from &quot;date-fns&quot;</code>，导致把整个库打包进来。</p>
-<p><img src="/2019/12/10/webpack打包优化/zhaorenjie/Desktop/optimize/引入了全部date-fns.png" alt="引入了全部date-fns"></p>
+<p><img src="/2019/12/10/webpack打包优化/zhaorenjie/Documents/blog/source/_posts/webpack打包优化/引入了全部date-fns.png" alt="引入了全部date-fns" style="zoom: 33%;"></p>
 <p>所以应该使用<code>import format from &quot;date-fns/format&quot;</code>，这样打包的时候只会把format打包进来。</p>
-<p><img src="/2019/12/10/webpack打包优化/zhaorenjie/Desktop/optimize/按需引入的date-fns.png" alt="按需引入的date-fns"></p>
+<p><img src="/2019/12/10/webpack打包优化/zhaorenjie/Documents/blog/source/_posts/webpack打包优化/按需引入的date-fns.png" alt="按需引入的date-fns" style="zoom:33%;"><img src="/2019/12/10/webpack打包优化/zhaorenjie/Documents/blog/source/_posts/webpack打包优化/优化后.png" alt="优化后"></p>
 <p>不过大部分的包基本都是需要全部引入。</p>
 <p>如果项目这样的导入方式较多，改起来比较麻烦，可以考虑写个ts的插件，碰到这种格式的导入重新定义ast。</p>
 </li>
@@ -363,7 +367,13 @@
 </li>
 <li><p>引入更合适的包：有时候用到的第三方库只是需要部分功能，却又不支持按需引入，导致把整个库都打包进来，造成了冗余。比如之前在用的解析yaml的js-yaml，虽然整个包体积也才40kb，但是我只需要safeLoad方法，可能只有一半的体积。于是转投<code>yamljs</code>库，体积缩小了。</p>
 </li>
-<li><p>主模块不引入懒加载模块</p>
+<li><p>主模块不引入懒加载模块：有时候图方便需要把懒加载模块组件引入到全局，直接就在shared.modules里引用了懒加载模块的路径，就像这样</p>
+<blockquote>
+<p>|–src/<br>|   |–shared.module.ts<br>|   |–lazy.module<br>|        |–components</p>
+<p>|           |–common.component.ts</p>
+<p>|           |–index.js</p>
+</blockquote>
+<p>会在index.js里导出common.component.ts，再在shared.module,ts引用common.compoent，这会导致在index.js文件里导出的其他ts模块（没有html）也会同时打包到share.module中，也就是主模块。懒加载的模块又回再次打包common组件，导致重复打包了两次。所以尽量避免引用。</p>
 </li>
 <li><p>摇树优化：Angular在aot模式下会去将ts编译成es代码，并没有用到uglify的摇树优化功能。</p>
 </li>
@@ -376,34 +386,32 @@
 <li>cacheGroups：自定义拆分规则，default就是入口打包的规则。test可以匹配资源的绝对路径或名称，priority表示规则的优先级，默认配置里给vendors的优先级较高，如果比default低的话，第三方库被引用两次，就会被打包到业务chunk。</li>
 <li>minSize：拆分出去的chunk大小必须大于这个值，单位是字节。</li>
 <li>maxInitialRequests：表示允许入口并行加载的最大请求数，也可以理解是入口文件拆分出的最多文件数量，防止拆分出太多模块导致请求数量过多而得不偿失。</li>
-</ul>
-</li>
-</ol>
-<ul>
 <li>maxAsyncRequests：类似maxInitialRequests，用来限制异步模块内部的并行最大请求数的。</li>
 </ul>
 <p>我们来看下具体案例，假设现在有这样的目录结构</p>
 <blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">   &gt; |--src/</span><br><span class="line">   &gt; |   |--a.js</span><br><span class="line">   &gt; |   |--b.js</span><br><span class="line">   &gt; |		|--c.js</span><br><span class="line">   &gt; |   |--index.js</span><br><span class="line">   &gt; |--assets/</span><br><span class="line">   &gt; |		|--jquery.js</span><br><span class="line">   &gt; |--package.json</span><br><span class="line">   &gt; |--webpack.config.js</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt; |--src/</span><br><span class="line">&gt; |   |--a.js</span><br><span class="line">&gt; |   |--b.js</span><br><span class="line">&gt; |		|--c.js</span><br><span class="line">&gt; |   |--index.js</span><br><span class="line">&gt; |--assets/</span><br><span class="line">&gt; |		|--jquery.js</span><br><span class="line">&gt; |--package.json</span><br><span class="line">&gt; |--webpack.config.js</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
 </blockquote>
 <p>代码逻辑比较简单，index模块引入了a模块和b模块，b模块引入了c模块和underscore库，a模块也引入了c模块和underscore模块，c模块是没有依赖的独立模块。</p>
-   <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.js</span></span><br><span class="line"><span class="keyword">import</span> a <span class="keyword">from</span> <span class="string">"./a.js"</span>;</span><br><span class="line"><span class="keyword">import</span> b <span class="keyword">from</span> <span class="string">"./b.js"</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"index----------"</span>);</span><br><span class="line">&#125;</span><br><span class="line">fn();</span><br><span class="line"><span class="comment">// a.js</span></span><br><span class="line"><span class="built_in">require</span>(<span class="string">"./c.js"</span>);</span><br><span class="line"><span class="keyword">import</span> _ <span class="keyword">from</span> <span class="string">"underscore"</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"a-------"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">module</span>.exports = fn();</span><br><span class="line"><span class="comment">// b.js</span></span><br><span class="line"><span class="built_in">require</span>(<span class="string">"./c.js"</span>);</span><br><span class="line"><span class="keyword">import</span> _ <span class="keyword">from</span> <span class="string">"underscore"</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"b-------"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">module</span>.exports = fn();</span><br><span class="line"><span class="comment">// c.js</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"c-------"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">module</span>.exports = fn();</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.js</span></span><br><span class="line"><span class="keyword">import</span> a <span class="keyword">from</span> <span class="string">"./a.js"</span>;</span><br><span class="line"><span class="keyword">import</span> b <span class="keyword">from</span> <span class="string">"./b.js"</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"index----------"</span>);</span><br><span class="line">&#125;</span><br><span class="line">fn();</span><br><span class="line"><span class="comment">// a.js</span></span><br><span class="line"><span class="built_in">require</span>(<span class="string">"./c.js"</span>);</span><br><span class="line"><span class="keyword">import</span> _ <span class="keyword">from</span> <span class="string">"underscore"</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"a-------"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">module</span>.exports = fn();</span><br><span class="line"><span class="comment">// b.js</span></span><br><span class="line"><span class="built_in">require</span>(<span class="string">"./c.js"</span>);</span><br><span class="line"><span class="keyword">import</span> _ <span class="keyword">from</span> <span class="string">"underscore"</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"b-------"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">module</span>.exports = fn();</span><br><span class="line"><span class="comment">// c.js</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"c-------"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">module</span>.exports = fn();</span><br></pre></td></tr></table></figure>
 <p>我们对配置不做任何改动，当然入口文件要设置成index.js，打包结果发现全部文件都在index.js文件中，这是因为我们没有设置chunks选项，只会去查找异步加载的chunk。我们放开chunks的控制，改成all，发现打包出了vendors~main文件，里面只有underscore库代码。尽管c文件被引用了两次，但是属于同一个chunk，所以被分离出来。</p>
 <p>我们把入口文件改造成多入口：</p>
-   <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">entry: &#123; <span class="attr">index</span>: <span class="string">"./multi/index.js"</span>, <span class="attr">a</span>: <span class="string">"./multi/a.js"</span> &#125;,</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">entry: &#123; <span class="attr">index</span>: <span class="string">"./multi/index.js"</span>, <span class="attr">a</span>: <span class="string">"./multi/a.js"</span> &#125;,</span><br></pre></td></tr></table></figure>
 <p>这样a和c文件都被不同的chunk引用了，我们再来看打包结果，发现还是没有被分离出来。这是因为minSize设置的值较大，webpack认为没有必要分离出来，我们把它的值改小点，改成30，打包后发现多了<code>a~main</code>的文件，里面有a和c文件打包结果，说明分离成功。</p>
 <p>接下来我们想要自定义拆分规则，把某些业务代码再分离出来，在src目录下创建locallib文件:</p>
-   <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">query</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(a);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> query;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">query</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(a);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> query;</span><br></pre></td></tr></table></figure>
 <p>然后在a和b模块引用这个模块，需要在webpack中配置：</p>
-   <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cacheGroups: &#123;</span><br><span class="line">  locallib: &#123;  <span class="comment">//拆分指定文件</span></span><br><span class="line">    test: <span class="regexp">/(src\/locallib\.js)$/</span>,</span><br><span class="line">    name: <span class="string">'locallib'</span>,</span><br><span class="line">    chunks: <span class="string">'initial'</span>,</span><br><span class="line">    <span class="comment">// priority： -30</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cacheGroups: &#123;</span><br><span class="line">  locallib: &#123;  <span class="comment">//拆分指定文件</span></span><br><span class="line">    test: <span class="regexp">/(src\/locallib\.js)$/</span>,</span><br><span class="line">    name: <span class="string">'locallib'</span>,</span><br><span class="line">    chunks: <span class="string">'initial'</span>,</span><br><span class="line">    <span class="comment">// priority： -30</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>打包后发现多了locallib的文件，说明分离成功。如果我们添加priority规则并比default设置的小，发现它被打进了<code>a~main</code>文件，这是因为locallib模块也符合default的规则，优先级又较高，所以被拆分到其规则组。神奇的是此时<code>a~main</code>文件消失了，这就是受到了maxInitialRequests影响。这时候index.js入口文件拆分出来的模块有index.js（入口文件也算）、a~index（a模块和index模块公共代码）、vendors~main（第三方库）和locallib（特定业务模块）共4个模块，大于了默认配置3，所以只能抽出3个模块。而为什么不是a~index被拆分出来，是因为它的体积最小决定的。可以修改一下这个配置成4，就可以成功打包。</p>
-<p>   所以maxInitialRequests有几点注意：</p>
+<p>所以maxInitialRequests有几点注意：</p>
 <ol>
 <li>入口文件本身算一个请求。</li>
 <li>动态加载得模块不算。</li>
 <li>通过runtimeChunk拆分出的runtime不算在内。</li>
 <li>只算js文件的请求，css不算在内</li>
 <li>如果同时有两个模块满足cacheGroup的规则要进行拆分，但是maxInitialRequests的值只能允许再拆分一个模块，那尺寸更大的模块会被拆分出来。</li>
+</ol>
+</li>
 </ol>
 <h2 id="编译速度优化"><a href="#编译速度优化" class="headerlink" title="编译速度优化"></a>编译速度优化</h2><p>这方面基本上无能为力，全靠机器性能了，说下自己在网上看到的。</p>
 <ol>
@@ -413,6 +421,10 @@
 <li>cacheLoader缓存。</li>
 <li>resolve参数：modules —- 指定第三方库的目录，提高查找速度；extensions —- 常用后缀放在前面，提高查找文件速度。</li>
 </ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>最后来看下优化后的结果：</p>
+<p><img src="/2019/12/10/webpack打包优化/zhaorenjie/Documents/blog/source/_posts/webpack打包优化/优化后.png" alt="优化后" style="zoom:33%;"></p>
+<p>可以看到最后减少了2MB左右，最主要是scripts包体积的减少，都放到了CDN中。其次是main包的体积减少，在这里优化了不引用懒加载模块、引入合适的包以及删除不用的库。最后是部分懒记载模块，这里优化点主要是按需引入和assets文件引入改成了http的请求。</p>
+<p>优化完之后不得不说一身舒服。</p>
 
       
     </div>
@@ -583,7 +595,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#查看文件体积分布"><span class="nav-number">1.</span> <span class="nav-text">查看文件体积分布</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#体积优化"><span class="nav-number">2.</span> <span class="nav-text">体积优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编译速度优化"><span class="nav-number">3.</span> <span class="nav-text">编译速度优化</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#查看文件体积分布"><span class="nav-number">1.</span> <span class="nav-text">查看文件体积分布</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#体积优化"><span class="nav-number">2.</span> <span class="nav-text">体积优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编译速度优化"><span class="nav-number">3.</span> <span class="nav-text">编译速度优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
@@ -635,7 +647,7 @@
 </span>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共60.8k字</span>
+  <span class="post-count">博客全站共61.1k字</span>
 </div>
 </div>
 
