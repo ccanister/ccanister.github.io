@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="稠鱼烧才好吃">
 <meta property="og:description" content="概览在Angular的模板中，我们经常使用ngFor指令实现元素循环渲染，并且推荐实现自定义默认跟踪方法（返回元素的唯一标识）来追踪变化，方便复用模板实例，只需移动即可，而不是暴力重新创建模板实例。而ngFor指令内部就是在ngDoCheck声明周期钩子通过DefaultIterableDiffer实例追踪数组的变化。 DefaultIterableDiffer本身不暴露给开发者，可以通过Iter">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-12-12T12:24:05.000Z">
+<meta property="og:updated_time" content="2020-10-08T10:54:31.284Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Angular之DefaultIterableDiffer变更检测">
 <meta name="twitter:description" content="概览在Angular的模板中，我们经常使用ngFor指令实现元素循环渲染，并且推荐实现自定义默认跟踪方法（返回元素的唯一标识）来追踪变化，方便复用模板实例，只需移动即可，而不是暴力重新创建模板实例。而ngFor指令内部就是在ngDoCheck声明周期钩子通过DefaultIterableDiffer实例追踪数组的变化。 DefaultIterableDiffer本身不暴露给开发者，可以通过Iter">
@@ -312,6 +312,7 @@
       
         <h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p>在Angular的模板中，我们经常使用ngFor指令实现元素循环渲染，并且推荐实现自定义默认跟踪方法（返回元素的唯一标识）来追踪变化，方便复用模板实例，只需移动即可，而不是暴力重新创建模板实例。而ngFor指令内部就是在ngDoCheck声明周期钩子通过DefaultIterableDiffer实例追踪数组的变化。</p>
 <p>DefaultIterableDiffer本身不暴露给开发者，可以通过IterableDiffers实例得到。而IterableDiffers使用defineInjectable方法注册在了根模块中。所以我们可以在构造器中直接使用IterableDiffers实例。注意的是DefaultIterableDiffer不是只只支持数组，而是支持全部可迭代对象，具有Symbol.iterator属性的对象。</p>
+<a id="more"></a>
 <h2 id="原则"><a href="#原则" class="headerlink" title="原则"></a>原则</h2><ol>
 <li>遵循从左往右的匹配顺序。</li>
 <li>尽可能地使用旧数组存在的元素。</li>

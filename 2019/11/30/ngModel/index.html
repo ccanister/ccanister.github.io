@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="Angular的数据绑定可以是双向的。当我们使用[()]去绑定一个变量时候，数据流从视图到数据源再到视图。通常在input框中，我们会这么写： 1&amp;lt;input [(ngModel)]=&quot;text&quot; /&amp;gt; 这样在Input框里输入文字时，text会及时地得到响应；而对text赋值的时候，input框也会显示其值。 而在表单里，我们需要定义自己的组件，简单的文本框、checkbox等是远远">
+<meta name="description" content="Angular的数据绑定可以是双向的。当我们使用[()]去绑定一个变量时候，数据流从视图到数据源再到视图。通常在input框中，我们会这么写： 1&amp;lt;input [(ngModel)]=&quot;text&quot; /&amp;gt; 这样在Input框里输入文字时，text会及时地得到响应；而对text赋值的时候，input框也会显示其值。">
 <meta name="keywords" content="Angular 表单">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ngModel">
 <meta property="og:url" content="http://yoursite.com/2019/11/30/ngModel/index.html">
 <meta property="og:site_name" content="稠鱼烧才好吃">
-<meta property="og:description" content="Angular的数据绑定可以是双向的。当我们使用[()]去绑定一个变量时候，数据流从视图到数据源再到视图。通常在input框中，我们会这么写： 1&amp;lt;input [(ngModel)]=&quot;text&quot; /&amp;gt; 这样在Input框里输入文字时，text会及时地得到响应；而对text赋值的时候，input框也会显示其值。 而在表单里，我们需要定义自己的组件，简单的文本框、checkbox等是远远">
+<meta property="og:description" content="Angular的数据绑定可以是双向的。当我们使用[()]去绑定一个变量时候，数据流从视图到数据源再到视图。通常在input框中，我们会这么写： 1&amp;lt;input [(ngModel)]=&quot;text&quot; /&amp;gt; 这样在Input框里输入文字时，text会及时地得到响应；而对text赋值的时候，input框也会显示其值。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-12-12T13:02:57.000Z">
+<meta property="og:updated_time" content="2020-10-08T10:55:19.288Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ngModel">
-<meta name="twitter:description" content="Angular的数据绑定可以是双向的。当我们使用[()]去绑定一个变量时候，数据流从视图到数据源再到视图。通常在input框中，我们会这么写： 1&amp;lt;input [(ngModel)]=&quot;text&quot; /&amp;gt; 这样在Input框里输入文字时，text会及时地得到响应；而对text赋值的时候，input框也会显示其值。 而在表单里，我们需要定义自己的组件，简单的文本框、checkbox等是远远">
+<meta name="twitter:description" content="Angular的数据绑定可以是双向的。当我们使用[()]去绑定一个变量时候，数据流从视图到数据源再到视图。通常在input框中，我们会这么写： 1&amp;lt;input [(ngModel)]=&quot;text&quot; /&amp;gt; 这样在Input框里输入文字时，text会及时地得到响应；而对text赋值的时候，input框也会显示其值。">
 
 
 
@@ -313,9 +313,7 @@
         <p>Angular的数据绑定可以是双向的。当我们使用<code>[()]</code>去绑定一个变量时候，数据流从视图到数据源再到视图。通常在input框中，我们会这么写：</p>
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;input [(ngModel)]=<span class="string">"text"</span> /&gt;</span><br></pre></td></tr></table></figure>
 <p>这样在Input框里输入文字时，text会及时地得到响应；而对text赋值的时候，input框也会显示其值。</p>
-<p>而在表单里，我们需要定义自己的组件，简单的文本框、checkbox等是远远不够的。自定义组件需要继承<code>ControlValueAccessor</code>接口，然后按照一堆约束，去定义provider等。那么这中间又发生了什么呢？</p>
-<h2 id="AbstractControl"><a href="#AbstractControl" class="headerlink" title="AbstractControl"></a>AbstractControl</h2><p>首先让我们来认识AbstractControl，这货一般出现在响应式表单中。但它只是抽象类，它的子类我们就很熟悉了，有FormControl、FormGroup和FormArray，很典型的组合模式和模板方法模式。我们看哈FormControl是如何单独使用的。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// template</span></span><br><span class="line">&lt;input [formControl]=<span class="string">"searchControl"</span> /&gt;</span><br><span class="line">&lt;p&gt;search Value: &#123;&#123; searchControl.value &#125;&#125;&lt;<span class="regexp">/p&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ component</span></span><br><span class="line"><span class="regexp">searchControl = new FormControl();	/</span><span class="regexp">/记得引入ReactiveFormsModule</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>&gt;<br><br>而在表单里，我们需要定义自己的组件，简单的文本框、checkbox等是远远不够的。自定义组件需要继承<code>ControlValueAccessor</code>接口，然后按照一堆约束，去定义provider等。那么这中间又发生了什么呢？<br><br>## AbstractControl<br><br>首先让我们来认识AbstractControl，这货一般出现在响应式表单中。但它只是抽象类，它的子类我们就很熟悉了，有FormControl、FormGroup和FormArray，很典型的组合模式和模板方法模式。我们看哈FormControl是如何单独使用的。<br><br><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// template</span></span><br><span class="line">&lt;input [formControl]=<span class="string">"searchControl"</span> /&gt;</span><br><span class="line">&lt;p&gt;search Value: &#123;&#123; searchControl.value &#125;&#125;&lt;<span class="regexp">/p&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ component</span></span><br><span class="line"><span class="regexp">searchControl = new FormControl();	/</span><span class="regexp">/记得引入ReactiveFormsModule</span></span><br></pre></td></tr></table></figure>
 <p>不同于ngModel，input框值存储在value属性中。AbstractControl还有touched、dirty等属性，这些就不说了。我们需要关注几点：</p>
 <ol>
 <li>构造方法，构造器可以接受三个参数。第一个可以初始值或者对象，当我们对一个空间进行disable时，可以在这里传入disabled属性：<code>new FormControl({value: &quot;dabai&quot;, disabled: true})</code>。第二个参数要么是同步验证器要么是对象，而对象可以传入updateOn属性。updateOn属性默认是”change”，意味着改变视图的同时，被绑定的值也会同步更新。我们可以将参数改成blur或者submit，就可以推迟验证时机。blur就是失去焦点时候再去更新值，submit是表单提交时再更新。个人觉得较好做法，就是对单个FormControl采用blur策略，对其父FormGroup采用submit策略，这样提交时候可以整体再去验证一遍，但这样写起来比较麻烦。</li>
@@ -589,7 +587,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#AbstractControl"><span class="nav-number">1.</span> <span class="nav-text">AbstractControl</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ngModel和ControlValueAccessor"><span class="nav-number">2.</span> <span class="nav-text">ngModel和ControlValueAccessor</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FormControlDirective"><span class="nav-number">2.1.</span> <span class="nav-text">FormControlDirective</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义表单控件"><span class="nav-number">3.</span> <span class="nav-text">自定义表单控件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ngModel和ControlValueAccessor"><span class="nav-number">1.</span> <span class="nav-text">ngModel和ControlValueAccessor</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FormControlDirective"><span class="nav-number">1.1.</span> <span class="nav-text">FormControlDirective</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义表单控件"><span class="nav-number">2.</span> <span class="nav-text">自定义表单控件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
             
 
           </div>

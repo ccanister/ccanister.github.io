@@ -1342,167 +1342,15 @@
 
       
         
-          
-            <h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p>在Angular的模板中，我们经常使用ngFor指令实现元素循环渲染，并且推荐实现自定义默认跟踪方法（返回元素的唯一标识）来追踪变化，方便复用模板实例，只需移动即可，而不是暴力重新创建模板实例。而ngFor指令内部就是在ngDoCheck声明周期钩子通过DefaultIterableDiffer实例追踪数组的变化。</p>
+          <h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p>在Angular的模板中，我们经常使用ngFor指令实现元素循环渲染，并且推荐实现自定义默认跟踪方法（返回元素的唯一标识）来追踪变化，方便复用模板实例，只需移动即可，而不是暴力重新创建模板实例。而ngFor指令内部就是在ngDoCheck声明周期钩子通过DefaultIterableDiffer实例追踪数组的变化。</p>
 <p>DefaultIterableDiffer本身不暴露给开发者，可以通过IterableDiffers实例得到。而IterableDiffers使用defineInjectable方法注册在了根模块中。所以我们可以在构造器中直接使用IterableDiffers实例。注意的是DefaultIterableDiffer不是只只支持数组，而是支持全部可迭代对象，具有Symbol.iterator属性的对象。</p>
-<h2 id="原则"><a href="#原则" class="headerlink" title="原则"></a>原则</h2><ol>
-<li>遵循从左往右的匹配顺序。</li>
-<li>尽可能地使用旧数组存在的元素。</li>
-<li>如果使用了旧数组的元素，那么不改变其顺序。例如原数组是[a,a]，新数组是[b,a,a]。由于遵从第一条原则，在比对时候我们得先把第一个元素a剔除出去，然后有两种做法：第一种是之前剔除的a元素放到数组末尾；第二种是之前剔除的元素重新插入到第二位，再将最后一个a从第二位移动到第三位或者说重新插入到数组末尾。从理论上第一种是最简单的，但这改变了元素顺序，所以我们采用第二种方法。</li>
-</ol>
-<h2 id="开始看吧"><a href="#开始看吧" class="headerlink" title="开始看吧"></a>开始看吧</h2><h3 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h3><p>DefaultIterableDiffer里面有几个双向链表和map。我们大致说下作用，大部分是head和tail格式，我们只说head。</p>
-<ul>
-<li>_previousItHead：上一次集合的头部</li>
-<li>_itHead：当前集合的头部</li>
-<li>_additionsHead：新增集合的头部</li>
-<li>_movesHead： 被移动集合的头部</li>
-<li>_removalsHead：被删除集合的头部</li>
-<li>_identityChangesHead：trackById相同，但元素发生了变化的头部</li>
-<li>_linkedRecords：是个map，关联了当前集合所有元素。key是集合元素的唯一标识，value是集合下拥有唯一标识的元素数组。</li>
-<li>_unlinkedRecords：是个map，只会在检测过程中使用，检测完成后置为空，关联了在对比过程中有可能被删除的元素。key、value是和 _linkedRecords一样的。</li>
-</ul>
-<h3 id="一些操作"><a href="#一些操作" class="headerlink" title="一些操作"></a>一些操作</h3><p>这些操作是在之后讲述的方法中提炼出来的，并不是对链表的操作，需要操作的元素时称作item。</p>
-<ul>
-<li>删除：从_itHead链表中删除，加入到_unlinkedRecords（可能会出现误删的情况，保证后面的复用）和_removalsHead链表中。</li>
-<li>移动：如果_unlinkedRecords中有item，那么删除它。先从_itHead链表中原位置删除，然后重新插入到_itHead和_movesHead链表以及_linkedRecords中。</li>
-<li>添加：插入到_itHead和_additionsTail链表和_linkedRecords中。</li>
-<li>重新插入：重新插入出现的原因是之前“误删”（后面会解释）。从_unlinkedRecords和_removalsHead链表中删除，再重新插入到_itHead和_movesHead链表以及_linkedRecords中。</li>
-</ul>
-<h3 id="check方法"><a href="#check方法" class="headerlink" title="check方法"></a>check方法</h3><p>然后我们聚焦于check方法，这是变更检测的入口。</p>
-<ul>
-<li><p>_reset方法是对全部属性的初始化。包括了将旧集合的previousIndex置为currentIndex，更新_nextPrevious指针以及迁移到_previousItHead链表，将_additionsHead等链表清空</p>
-</li>
-<li><p>判断是否是数组还是类数组，我们进入数组的分支。</p>
-</li>
-<li><p>从新数组的第一项开始比对，item代表新数组元素，record代表旧数组元素，index代表 当前迭代索引。比较item和record是否相等，这时候就会调用trackBy获取item的唯一索引，默认是item对象本身，即使实例不一样，但是索引一样，我们也认为是相等的。所以，通常鼓励传入自定义trackBy方法，当从接口获取到数据时，只要其id一样，就不用重复创建其实例。当record为空或者元素不相等时候，进入_mismatch方法。</p>
-<ul>
-<li>获取record前一个元素prev，后续插入到_itHead链表中，都是插到prev元素后面。因为元素不相等，说明在这个位置上，record是要被删除的，执行删除操作。</li>
-<li>然后查看旧数组index以后是否有和item相同的值。如果有的话，我们执行移动操作；如果没有的话，我们去查看_unlinkedRecords是否有该元素，有的话，证明record是误删的，所以执行重新插入操作；如果也没有的话，说明是个新元素，我们执行添加操作。_<em>在这里确实有个疑问，为了符合原则三，不应该先去查找_unlinkedRecords，再去查看旧数组index以后是否有和item相同的值么。假设我们有数组变化[c,a,c] -&gt; [a,c]，第一个c会被加入到_unlinkedRecords中，当index=1时候，旧数组第二个位置确实有c，但如果这时候把第二个c放到index=1位置时候，那么顺序不就不对了</em>_</li>
-<li>设置mayBeDirty标识符为true。</li>
-</ul>
-<p>如果两个元素是相等，而且mayBeDirty标识符是true，那么进入_verifyReinsertion方法。</p>
-<ul>
-<li>查看_unlinkedRecords链表中是否有该元素，如果有的话也把这个误删的元素拿回来，执行重新插入操作。这里就是涉及到了我们的第三个原则，保证复用元素顺序一致性。如果没有的话，我们查看record在旧数组的索引是否和index一样，如果不是就移动它到index位置。我们考虑这样一种情况，原数组是[a,b,c,c]，新数组是[e,c,c]。当对比到第二个位置的时候，因为b和c不一样，而且第二个位置之后也有c的存在，所以会把旧数组的第一个c移动到第一个位置。这时候比对第三个位置，大家都是c，但是旧数组的c的索引是3，与index不一样了，所以也要将其移动。</li>
-</ul>
-</li>
-<li><p>如果record不为空，说明这些旧元素是多出来的，全都加入 _removalsHead链表中。</p>
-</li>
-<li><p>清空_unlinkedRecords，以及 _additionsHead等链表末元素设为空。</p>
-</li>
-</ul>
-<p>当该方法结束后，_itHead链表形成了和新数组一致的数据。</p>
-<h3 id="forEachOperation方法"><a href="#forEachOperation方法" class="headerlink" title="forEachOperation方法"></a>forEachOperation方法</h3><p>diff方法执行完毕后，变更信息都存储各个链表中。我们不能直接通过_additionsHead等链表来计算是否需要增加、删除或者移动元素再反映到视图中，因为他们的顺序是不可知的。所以我们还是得遍历_itHead和_removalsHead链表得知真正的操作序列。</p>
-<p>在看这段代码之前，我们先思考数组操作无非就是三种：增加、删除和移动元素。如果是增加元素，那么在新增元素后的元素下标应该都+1；反之若是删除元素，在删除元素后的元素下标都会-1。当移动元素的时候，我们可以向后移动元素，也可以向前移动元素。例如旧数组是[a,b,c]，新数组是[c,b,a]。我们有两种方法：第一种是移动a到数组尾部，再将b移动到c后面；第二种是移动c到数组头部，再将b移动到c后面。遵循原则一，我们对新数组从左到右匹配元素，我们就会采取第二种方法。在每次移动元素后，在被移动元素的旧索引和新索引 之间元素下标也会+1。这都是其他元素变更导致元素的下标变化。</p>
-<p>所有对于移动的元素来说，我们不能单纯的比较record的新索引和旧索引是否一致，而决定是否需要移动元素。因为其他元素都会导致record在移动，最后可能刚好导致record已经落在了新索引位置上了。刚刚的[a,b,c]就是一个例子，虽然a的新旧索引不一样，但因为b和c的前移，导致它最后落在了新索引，而不必再去操作。</p>
-<p>好了，现在我们回到forEachOperation方法。先来看addRemoveOffset和moveOffsets局部变量。它们的作用就是记录元素变动导致其他元素下标如何变化。addRemoveOffset记录元素是否有增加或者删除，moveOffsets是一个区间值，记录元素的移动。当然我们也可以直接用一个length的数组去代替这两个变量。然后adjPreviousIndex是先前的索引加上其他元素导致的偏移值。我们可以看得出来adjPreviousIndex&gt;=currentIndex是一定的（record仍然存在情况下）。因为首先假设没有其他元素偏移，之前元素只会增加或者删除，那么adjPreviousIndex==currentIndex。然后如果有其他元素偏移，这个偏移量也是正数，所以会导致adjPreviousIndex&gt;currentIndex。</p>
-<p>我们再来看这段for循环。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> localMovePreviousIndex = adjPreviousIndex - addRemoveOffset;</span><br><span class="line"><span class="keyword">const</span> localCurrentIndex = currentIndex ! - addRemoveOffset;</span><br><span class="line"><span class="keyword">if</span> (localMovePreviousIndex != localCurrentIndex) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; localMovePreviousIndex; i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> offset = i &lt; moveOffsets.length ? moveOffsets[i] : (moveOffsets[i] = <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">const</span> index = offset + i;</span><br><span class="line">    <span class="keyword">if</span> (localCurrentIndex &lt;= index &amp;&amp; index &lt; localMovePreviousIndex) &#123;</span><br><span class="line">      moveOffsets[i] = offset + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">	<span class="keyword">const</span> previousIndex = record.previousIndex;</span><br><span class="line">	moveOffsets[previousIndex] = localCurrentIndex - localMovePreviousIndex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>先排除掉增加或者删除元素的影响，因为迁移真正影响的是旧数组localMovePreviousIndex和localMovePreviousIndex之间的元素。如果是一样的，说明record现在正好落在了它该在的元素；否则就需要对处在localMovePreviousIndex和localCurrentIndex之间元素的下标+1。最后记录record的偏移值。</p>
-<p>最后，其实我们可以遍历_removalsHead链表删除元素，再去遍历_itHead链表决定移动还是增加元素。但还是为了遵循原则一，我们将两者同时遍历，那什么删除元素，什么时候是移动还是增加的元素呢。实际上在遍历的时候，我们还是以_itHead链表为基准的，所以当index==_removalsHead.index+其他元素偏移值时，应该先执行删除元素，再去执行其他操作。</p>
-<h4 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h4><p>我们看Angular的单元测试，由[0, 1, 2, 3, 4, 5] -&gt; [6, 2, 7, 0, 4, 8] 局部变量的变化。（moveoffsets和addRemoveOffset都是本轮变换执行完的值）</p>
-<table>
-<thead>
-<tr>
-<th>record</th>
-<th>adjPreviousIndex</th>
-<th>currentIndex</th>
-<th>moveoffsets</th>
-<th>addRemoveOffset</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>6</td>
-<td>null</td>
-<td>0</td>
-<td>null</td>
-<td>1</td>
-<td>增加</td>
-</tr>
-<tr>
-<td>2</td>
-<td>3</td>
-<td>1</td>
-<td>[1,1,-2]</td>
-<td>1</td>
-<td>前移</td>
-</tr>
-<tr>
-<td>7</td>
-<td>null</td>
-<td>1</td>
-<td>[1,1,-2]</td>
-<td>2</td>
-<td>增加</td>
-</tr>
-<tr>
-<td>0</td>
-<td>3</td>
-<td>3</td>
-<td>[1,1,-2]</td>
-<td>2</td>
-<td>不动</td>
-</tr>
-<tr>
-<td>1</td>
-<td>4</td>
-<td>null</td>
-<td>[1,1,-2]</td>
-<td>1</td>
-<td>删除</td>
-</tr>
-<tr>
-<td>3</td>
-<td>4</td>
-<td>null</td>
-<td>[1,1,-2]</td>
-<td>0</td>
-<td>删除</td>
-</tr>
-<tr>
-<td>4</td>
-<td>4</td>
-<td>4</td>
-<td>[1,1,-2]</td>
-<td>0</td>
-<td>不动</td>
-</tr>
-<tr>
-<td>5</td>
-<td>5</td>
-<td>null</td>
-<td>[1,1,-2]</td>
-<td>-1</td>
-<td>删除</td>
-</tr>
-<tr>
-<td>8</td>
-<td>null</td>
-<td>5</td>
-<td>[1,1,-2]</td>
-<td>0</td>
-<td>增加</td>
-</tr>
-</tbody>
-</table>
-<p>这个demo里面涵盖了所有的变化情况，包括元素previousIndex 不等于currentIndex，但由于其他元素移动导致他刚好也不移动的情况。</p>
-<h2 id="DefaultKeyValueDiffer"><a href="#DefaultKeyValueDiffer" class="headerlink" title="DefaultKeyValueDiffer"></a>DefaultKeyValueDiffer</h2><p>看完了DefaultIterableDiffer，惊奇的发现隔壁还有DefaultKeyValueDiffer文件。这个可以实现ngStyle哦，而且比较简单，因为不需要其没有顺序一致性的要求。只需要得到change、add和remove三种情况即可。我们也来大致看一下吧。</p>
-<p>check方法还是变更检测入口，也先做数据的重置。然后从新对象开始迭代，同时insertBefore初始化为旧对象链表头部，_appendAfter初始化为空。</p>
-<ul>
-<li>如果key相等，检查value是否一样，如果不一样加入到_changesHead链表中。insertBefore和 _appendAfter都后移。</li>
-<li>如果key不相等，检查是否旧对象是否有该key。<ul>
-<li>有的话重复第一步，再该record从原链表中删除；如果没有的话，说明是新key，就创建一个record，再加入到_additionsHead链表中。</li>
-<li>然后再将record重新插入到当前链表中，如果insertBefore存在，就插入到其后面；如果其不存在说明已经到了链表的末尾，直接插入链表的末尾。</li>
-</ul>
-</li>
-<li>如果当前链表还有值，说明都是多出来的值，全部加入到_removelsHead链表中。</li>
-</ul>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><a href="https://segmentfault.com/a/1190000013516380" target="_blank" rel="noopener">Angular源码剖析：DefaultKeyValueDiffer和DefaultIterableDiffer的变更检测算法</a></li>
-</ol>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/12/10/DefaultIterableDiffer/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1837,112 +1685,16 @@
 
       
         
-          
-            <p>Angular的数据绑定可以是双向的。当我们使用<code>[()]</code>去绑定一个变量时候，数据流从视图到数据源再到视图。通常在input框中，我们会这么写：</p>
+          <p>Angular的数据绑定可以是双向的。当我们使用<code>[()]</code>去绑定一个变量时候，数据流从视图到数据源再到视图。通常在input框中，我们会这么写：</p>
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;input [(ngModel)]=<span class="string">"text"</span> /&gt;</span><br></pre></td></tr></table></figure>
 <p>这样在Input框里输入文字时，text会及时地得到响应；而对text赋值的时候，input框也会显示其值。</p>
-<p>而在表单里，我们需要定义自己的组件，简单的文本框、checkbox等是远远不够的。自定义组件需要继承<code>ControlValueAccessor</code>接口，然后按照一堆约束，去定义provider等。那么这中间又发生了什么呢？</p>
-<h2 id="AbstractControl"><a href="#AbstractControl" class="headerlink" title="AbstractControl"></a>AbstractControl</h2><p>首先让我们来认识AbstractControl，这货一般出现在响应式表单中。但它只是抽象类，它的子类我们就很熟悉了，有FormControl、FormGroup和FormArray，很典型的组合模式和模板方法模式。我们看哈FormControl是如何单独使用的。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// template</span></span><br><span class="line">&lt;input [formControl]=<span class="string">"searchControl"</span> /&gt;</span><br><span class="line">&lt;p&gt;search Value: &#123;&#123; searchControl.value &#125;&#125;&lt;<span class="regexp">/p&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ component</span></span><br><span class="line"><span class="regexp">searchControl = new FormControl();	/</span><span class="regexp">/记得引入ReactiveFormsModule</span></span><br></pre></td></tr></table></figure>
-<p>不同于ngModel，input框值存储在value属性中。AbstractControl还有touched、dirty等属性，这些就不说了。我们需要关注几点：</p>
-<ol>
-<li>构造方法，构造器可以接受三个参数。第一个可以初始值或者对象，当我们对一个空间进行disable时，可以在这里传入disabled属性：<code>new FormControl({value: &quot;dabai&quot;, disabled: true})</code>。第二个参数要么是同步验证器要么是对象，而对象可以传入updateOn属性。updateOn属性默认是”change”，意味着改变视图的同时，被绑定的值也会同步更新。我们可以将参数改成blur或者submit，就可以推迟验证时机。blur就是失去焦点时候再去更新值，submit是表单提交时再更新。个人觉得较好做法，就是对单个FormControl采用blur策略，对其父FormGroup采用submit策略，这样提交时候可以整体再去验证一遍，但这样写起来比较麻烦。</li>
-</ol>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">form = <span class="keyword">this</span>.fb.group(</span><br><span class="line">    &#123;</span><br><span class="line">      username: [<span class="string">"dabai"</span>, &#123; updateOn: <span class="string">"blur"</span> &#125;],	<span class="comment">// 如果不指定，就会使用父策略</span></span><br><span class="line">      password: [<span class="string">""</span>, &#123; updateOn: <span class="string">"blur"</span> &#125;]</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123; updateOn: <span class="string">"submit"</span> &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li><p>updateValueAndValidity方法。对AbstractControl初始化或者设置值的时候会调用该方法。</p>
-<ul>
-<li><p>查看自己是否是DISABLED状态（如果所有子abstractControl都是DISABLED状态，那么自己也会变成DISABLED状态）。</p>
-</li>
-<li><p>对于FormGroup和FormArray，这时候会重新计算表单值，如果子AbstractControl是DISABLED状态，就会舍弃该值。所以如果表单中有控件是DISABLED状态，通过value是无法取得其值，可以调用<code>getRawValue</code>方法拿到。</p>
-</li>
-<li><p>再去跑所有的验证器，当然会先取消之前异步验证器订阅。如果同步验证器跑完后是INVALID状态，就不再运行异步验证器。需要注意，异步验证器使用了forkJoin组合符，那么意味着在complete之前，AbstractControl状态一直都是PENDING。之前有用过withLateset操作符，导致control状态一直没更新。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">composeAsync(validators: (AsyncValidatorFn|<span class="literal">null</span>)[]): AsyncValidatorFn|<span class="literal">null</span> &#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">control: AbstractControl</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">const</span> observables = _executeAsyncValidators(control, presentValidators).map(toObservable);</span><br><span class="line">        <span class="keyword">return</span> forkJoin(observables).pipe(map(_mergeErrors));</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>如果传入的参数有onlySelf参数，就不再去更新父abstractControl。</p>
-</li>
-</ul>
-</li>
-</ol>
-<h2 id="ngModel和ControlValueAccessor"><a href="#ngModel和ControlValueAccessor" class="headerlink" title="ngModel和ControlValueAccessor"></a>ngModel和ControlValueAccessor</h2><p>介绍完AbstractControl后，我们先来看ngModel。其内部肯定有model实例和外部变量绑定。除此之外，还有formControl实例，其大部分功能都是基于formControl实现的。我们发现其构造器中有ControlValueAccessor实例，令牌是NG_VALUE_ACCESSOR，可以想到自定义表单控件也是注册到这个令牌上的。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> NgModel &#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="meta">@Input</span>(<span class="string">'ngModel'</span>) model: <span class="built_in">any</span>;</span><br><span class="line">	<span class="meta">@Output</span>(<span class="string">'ngModelChange'</span>) update = <span class="keyword">new</span> EventEmitter();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> readonly control: FormControl = <span class="keyword">new</span> FormControl();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"><span class="meta">@Optional</span>() <span class="meta">@Host</span>() parent: ControlContainer,</span></span><br><span class="line"><span class="params">                <span class="meta">@Optional</span>() <span class="meta">@Self</span>() <span class="meta">@Inject</span>(NG_VALIDATORS) validators: <span class="built_in">Array</span>&lt;Validator|ValidatorFn&gt;,</span></span><br><span class="line"><span class="params">                <span class="meta">@Optional</span>() <span class="meta">@Self</span>() <span class="meta">@Inject</span>(NG_ASYNC_VALIDATORS) asyncValidators: <span class="built_in">Array</span>&lt;AsyncValidator|AsyncValidatorFn&gt;,</span></span><br><span class="line"><span class="params">                <span class="meta">@Optional</span>() <span class="meta">@Self</span>() <span class="meta">@Inject</span>(NG_VALUE_ACCESSOR)</span></span><br><span class="line"><span class="params">                valueAccessors: ControlValueAccessor[]</span>) &#123;</span><br><span class="line">                  <span class="keyword">super</span>();</span><br><span class="line">                  ...</span><br><span class="line">                &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>原生表单控件也就几个而已，但用户自定义的控件可能会有无数个。Angular需要在FormControl和表单控件搭建一个桥梁，这也就是ControlValueAccessor对象作用。它就是用来Angular Forms和DOM通信工具。我们可以来看带有文本框的ngModel编译后文件：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// template</span></span><br><span class="line">&lt;input</span><br><span class="line">  [ngModel]=<span class="string">"name"</span></span><br><span class="line">  #ctrl=<span class="string">"ngModel"</span></span><br><span class="line">  required</span><br><span class="line">  (ngModelChange)=<span class="string">"changeText($event)"</span></span><br><span class="line">  (blur)=<span class="string">"blur()"</span></span><br><span class="line">/&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 编译后</span></span><br><span class="line">i1.ɵprd(</span><br><span class="line">    <span class="number">1024</span>,</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    i2.NG_VALIDATORS,</span><br><span class="line">    <span class="function"><span class="keyword">function</span>(<span class="params">p0_0</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> [p0_0];</span><br><span class="line">    &#125;,</span><br><span class="line">    [i2.RequiredValidator]</span><br><span class="line">),</span><br><span class="line">i1.ɵprd(</span><br><span class="line">    <span class="number">1024</span>,</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    i2.NG_VALUE_ACCESSOR,</span><br><span class="line">    <span class="function"><span class="keyword">function</span>(<span class="params">p0_0</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> [p0_0];</span><br><span class="line">    &#125;,</span><br><span class="line">    [i2.DefaultValueAccessor]</span><br><span class="line">),</span><br><span class="line">i1.ɵdid(</span><br><span class="line">    <span class="number">5</span>,</span><br><span class="line">    <span class="number">671744</span>,</span><br><span class="line">    [[<span class="string">"ctrl"</span>, <span class="number">4</span>]],</span><br><span class="line">    <span class="number">0</span>,</span><br><span class="line">    i2.NgModel,</span><br><span class="line">    [</span><br><span class="line">      [<span class="number">8</span>, <span class="literal">null</span>],</span><br><span class="line">      [<span class="number">6</span>, i2.NG_VALIDATORS],</span><br><span class="line">      [<span class="number">8</span>, <span class="literal">null</span>],</span><br><span class="line">      [<span class="number">6</span>, i2.NG_VALUE_ACCESSOR]</span><br><span class="line">    ],</span><br><span class="line">    &#123; model: [<span class="number">0</span>, <span class="string">"model"</span>] &#125;,</span><br><span class="line">    &#123; update: <span class="string">"ngModelChange"</span> &#125;</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
-<p>看到其deps第四个参数就是NG_VALUE_ACCESSOR的令牌，而实际值是DefaultValueAccessor。所以我们最终是通过操作DefaultValueAccessor控制DOM的。</p>
-<p>有最重要的两个方法：writeValue和registerOnChange。第一个方法是提供给FormControl来设置值得，而第二个值是用来注册回调函数，这个方法可以在DOM发生变化时候触发，比如我们可以在文本框的change事件中调用这个方法。当我们在自定义控件时候，可以拿到这个回调函数，然后自己去选择更新控件更新值的时机。</p>
-<p>我们重新回到ngModel类中，因为NG_VALUE_ACCESSOR令牌是multi的，所以在构造器中拿到的是数组，而实际肯定只能存在一个。所以需要寻找对应的ControlValueAccessor。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">valueAccessors.forEach(<span class="function">(<span class="params">v: ControlValueAccessor</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (v.<span class="keyword">constructor</span> === DefaultValueAccessor) &#123;</span><br><span class="line">      defaultAccessor = v;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isBuiltInAccessor(v)) &#123;</span><br><span class="line">      <span class="keyword">if</span> (builtinAccessor)</span><br><span class="line">        _throwError(dir, <span class="string">'More than one built-in value accessor matches form control with'</span>);</span><br><span class="line">      builtinAccessor = v;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (customAccessor)</span><br><span class="line">        _throwError(dir, <span class="string">'More than one custom value accessor matches form control with'</span>);</span><br><span class="line">      customAccessor = v;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
-<p>其中内置的ControlValueAccessor除了DefaultValueAccessor，还有以下几种：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">ControlValueAccessor</th>
-<th>Form类型</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">CheckboxControlValueAccessor</td>
-<td>input[type=checkbox]</td>
-</tr>
-<tr>
-<td style="text-align:left">RangeValueAccessor</td>
-<td>input[type=range]</td>
-</tr>
-<tr>
-<td style="text-align:left">NumberValueAccessor</td>
-<td>input[type=number]</td>
-</tr>
-<tr>
-<td style="text-align:left">SelectControlValueAccessor</td>
-<td>select</td>
-</tr>
-<tr>
-<td style="text-align:left">SelectMultipleControlValueAccessor</td>
-<td>select[multiple]</td>
-</tr>
-<tr>
-<td style="text-align:left">RadioControlValueAccessor</td>
-<td>input[type=radio]</td>
-</tr>
-</tbody>
-</table>
-<p>如果没有找到，则认定是自定义。</p>
-<p>然后在<code>ngOnChanges</code>方法中会调用setUpControl建立FormControl和ControlValueAccessor的关系。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">setUpControl</span>(<span class="params">control: FormControl, dir: NgControl</span>): <span class="title">void</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!control) _throwError(dir, <span class="string">'Cannot find control with'</span>);</span><br><span class="line">  <span class="keyword">if</span> (!dir.valueAccessor) _throwError(dir, <span class="string">'No value accessor for form control with'</span>);</span><br><span class="line"></span><br><span class="line">  control.validator = Validators.compose([control.validator !, dir.validator]);</span><br><span class="line">  control.asyncValidator = Validators.composeAsync([control.asyncValidator !, dir.asyncValidator]);</span><br><span class="line">  dir.valueAccessor !.writeValue(control.value);</span><br><span class="line"></span><br><span class="line">  setUpViewChangePipeline(control, dir);</span><br><span class="line">  setUpModelChangePipeline(control, dir);</span><br><span class="line"></span><br><span class="line">  setUpBlurPipeline(control, dir);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (dir.valueAccessor !.setDisabledState) &#123;</span><br><span class="line">    control.registerOnDisabledChange(</span><br><span class="line">        (isDisabled: <span class="built_in">boolean</span>) =&gt; &#123; dir.valueAccessor !.setDisabledState !(isDisabled); &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  dir._rawValidators.forEach(<span class="function">(<span class="params">validator: Validator | ValidatorFn</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> ((&lt;Validator&gt;validator).registerOnValidatorChange)</span><br><span class="line">      (&lt;Validator&gt;validator).registerOnValidatorChange !<span class="function">(<span class="params">(<span class="params"></span>) =&gt; control.updateValueAndValidity(<span class="params"></span>)</span>);</span></span><br><span class="line"><span class="function">  &#125;);</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">  <span class="params">dir</span>._<span class="params">rawAsyncValidators</span>.<span class="params">forEach</span>(<span class="params">(<span class="params">validator: AsyncValidator | AsyncValidatorFn</span>) =&gt; &#123;</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">if</span> (<span class="params">(<span class="params">&lt;Validator&gt;validator</span>).registerOnValidatorChange</span>)</span></span></span><br><span class="line"><span class="function"><span class="params">      (<span class="params">&lt;Validator&gt;validator</span>).registerOnValidatorChange !(<span class="params">(<span class="params"></span>) =&gt; control.updateValueAndValidity(<span class="params"></span>)</span>);</span></span></span><br><span class="line"><span class="function"><span class="params">  &#125;</span>);</span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
-<ol>
-<li>合并同步和异步验证器。</li>
-<li>初始化dom的值。</li>
-<li>在ControlValueAccessor注册registerOnChange回调函数。如果control的updateOn策略是change，那么在视图上改变值的时候，control会更新值，ngModel的内部也会更新绑定的值。</li>
-<li>formControl注册registerOnChange回调函数，当control更新值的时候，也会更新视图上的值。</li>
-<li>在ControlValueAccessor注册registerOnTouched事件。如果formControl的updateOn策略是blur，就会做和第三步一样的事。</li>
-<li>验证器添加registerOnValidatorChange回调函数。如果我们对Validator的验证策略做出变化时，formControl会再次调用updateValueAndValidity函数。比如Validator.MaxLength从3变成4，我们应该再次运行验证器确保数据有效。</li>
-</ol>
-<p>上面说的可能还有点迷糊，我们把注册的回调函数和当ngModel绑定的变量值更新时发生的变化方法提炼出来。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ngModel绑定的变量更新时</span></span><br><span class="line"><span class="keyword">private</span> _updateValue(value: <span class="built_in">any</span>): <span class="built_in">void</span> &#123;</span><br><span class="line">	resolvedPromise.then(<span class="function"><span class="params">()</span> =&gt;</span> &#123; <span class="keyword">this</span>.control.setValue(value, &#123;emitViewToModelChange: <span class="literal">false</span>&#125;); 		&#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ControlValueAccessor注册的回调函数</span></span><br><span class="line">dir.valueAccessor !.registerOnChange(<span class="function">(<span class="params">newValue: <span class="built_in">any</span></span>) =&gt;</span> &#123;</span><br><span class="line">  control._pendingValue = newValue;</span><br><span class="line">  control._pendingChange = <span class="literal">true</span>;</span><br><span class="line">  control._pendingDirty = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (control.updateOn === <span class="string">'change'</span>) updateControl(control, dir);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">updateControl</span>(<span class="params">control: FormControl, dir: NgControl</span>): <span class="title">void</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (control._pendingDirty) control.markAsDirty();</span><br><span class="line">  control.setValue(control._pendingValue, &#123;emitModelToViewChange: <span class="literal">false</span>&#125;);</span><br><span class="line">  dir.viewToModelUpdate(control._pendingValue);</span><br><span class="line">  control._pendingChange = <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// formControl的setValue</span></span><br><span class="line">setValue(value: <span class="built_in">any</span>, options: &#123;</span><br><span class="line">    onlySelf?: <span class="built_in">boolean</span>,</span><br><span class="line">    emitEvent?: <span class="built_in">boolean</span>,</span><br><span class="line">    emitModelToViewChange?: <span class="built_in">boolean</span>,</span><br><span class="line">    emitViewToModelChange?: <span class="built_in">boolean</span></span><br><span class="line">  &#125; = &#123;&#125;): <span class="built_in">void</span> &#123;</span><br><span class="line">    (<span class="keyword">this</span> <span class="keyword">as</span>&#123;value: <span class="built_in">any</span>&#125;).value = <span class="keyword">this</span>._pendingValue = value;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>._onChange.length &amp;&amp; options.emitModelToViewChange !== <span class="literal">false</span>) &#123;</span><br><span class="line">      <span class="keyword">this</span>._onChange.forEach(</span><br><span class="line">          (changeFn) =&gt; changeFn(<span class="keyword">this</span>.value, options.emitViewToModelChange !== <span class="literal">false</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.updateValueAndValidity(options);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// formControl注册的回调函数</span></span><br><span class="line">control.registerOnChange(<span class="function">(<span class="params">newValue: <span class="built_in">any</span>, emitModelEvent: <span class="built_in">boolean</span></span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// control -&gt; view</span></span><br><span class="line">    dir.valueAccessor !.writeValue(newValue);</span><br><span class="line">    <span class="comment">// control -&gt; ngModel</span></span><br><span class="line">    <span class="keyword">if</span> (emitModelEvent) dir.viewToModelUpdate(newValue);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>可以看到当ngModel绑定的变量值发生变化时和视图发生改变时候都会去调用formControl.setValue方法。而该方法有两个参数值得注意：emitModelToViewChange适用于是否更新视图，emitViewToModelChange适用于是否更新model。</p>
-<p>而formControl注册的回调函数中保证了值变化时必定更新视图。所以当如果是视图更新值的时候，就不需要去更新视图，只需要去更新model即可，这也就是updateControl放中为什么传入了emitViewToModelChange参数。并且updateControl方法手动的调用了ngModel内部的更新model值方法。而当数据更新值时，不再需要更新model，只需要更新view即可，所以传入emitModelToViewChange参数。</p>
-<p>我们可以看到model的变化会引起formControl的值变化,formControl再去更新视图的值。而视图的变化同时手动更新了formControl的值和model的值。</p>
-<h3 id="FormControlDirective"><a href="#FormControlDirective" class="headerlink" title="FormControlDirective"></a>FormControlDirective</h3><p>在响应式表单中，一般是这么使用的：<code>&lt;input [formControl]=&quot;searchControl&quot; /&gt;</code>。这时候用的是FormControlDirective指令，它的构造函数和初始化过程基本与NgModel一致。不同的是，在Angular7之前是可以这么写的：<code>&lt;input [formControl]=&quot;searchControl&quot; [(ngModel)]=&quot;search&quot;/&gt;</code>，而之后为了避免开发人员混乱，不知道这个到底是响应式表单还是模板驱动式表单，会报出warning，提醒开发者应该使用其中一种模式。</p>
-<h2 id="自定义表单控件"><a href="#自定义表单控件" class="headerlink" title="自定义表单控件"></a>自定义表单控件</h2><p>实际开发中，我们经常需要自定义表单控件来满足需求，下面我们来做一个简单的控件，有增加和减少两个按钮控制数量，先来看模板：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>count: &#123;&#123; count &#125;&#125;<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">"increase()"</span>&gt;</span>+<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">button</span> (<span class="attr">click</span>)=<span class="string">"decrease()"</span>&gt;</span>-<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>然后组件需要继承ControlValueAccessor接口，然后复写几个方法。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> HelloComponent <span class="keyword">implements</span> ControlValueAccessor &#123;</span><br><span class="line">  count = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">	writeValue(value: <span class="built_in">any</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">	registerOnTouched(fn: <span class="built_in">any</span>): <span class="built_in">void</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">  propagateChange = <span class="function">(<span class="params">_: <span class="built_in">any</span></span>) =&gt;</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">  registerOnChange(fn: <span class="built_in">any</span>): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="keyword">this</span>.propagateChange = fn;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们在注册回调函数的时候，将propagateChange变量指向回调函数。然后我们在增加或者减少数量调用该方法，就可以更新model。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">increase() &#123;</span><br><span class="line">  <span class="keyword">this</span>.changeCount(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">decrease() &#123;</span><br><span class="line">  <span class="keyword">this</span>.changeCount(<span class="number">-1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> changeCount(offset: <span class="built_in">number</span>) &#123;</span><br><span class="line">  <span class="keyword">this</span>.count += offset;</span><br><span class="line">  <span class="keyword">this</span>.propagateChange(<span class="keyword">this</span>.count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果我们对该控件进行初始化或者赋值的时候，就会调用writeValue函数，所以我们还需要改写writeValue函数。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">writeValue(value: <span class="built_in">number</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> value === <span class="string">"number"</span>) &#123;</span><br><span class="line">  <span class="keyword">this</span>.count = value;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="keyword">this</span>.count = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果传入的value不是number类型，我们就给一个默认值0。这时候，我们运行程序，发现会报找不到ControlValueAccessor，这是因为我们忘记注册了。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> HELLO_ACCESSOR: <span class="built_in">any</span> = &#123;</span><br><span class="line">  provide: NG_VALUE_ACCESSOR,</span><br><span class="line">  useExisting: forwardRef(<span class="function"><span class="params">()</span> =&gt;</span> HelloComponent),	<span class="comment">// 因为此时HelloComponent未定义，需要用forwardRef函数包裹</span></span><br><span class="line">  multi: <span class="literal">true</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  ...</span><br><span class="line">  providers: [HELLO_ACCESSOR]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> HelloComponent <span class="keyword">implements</span> ControlValueAccessor &#123;...&#125;</span><br></pre></td></tr></table></figure>
-<p>我们来验证下：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// template</span></span><br><span class="line">&lt;hello [(ngModel)]=<span class="string">"count"</span>&gt;&lt;<span class="regexp">/hello&gt;</span></span><br><span class="line"><span class="regexp">&lt;p&gt;</span></span><br><span class="line"><span class="regexp">	out count: &#123;&#123;count&#125;&#125;</span></span><br><span class="line"><span class="regexp">&lt;/</span>p&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">// component</span></span><br><span class="line">count = <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
-<p>模版上的count会随着按钮点击而实时变化，说明已经注册成功。以上代码可以在<a href="https://stackblitz.com/edit/angular-43zpcw?file=src%2Fapp%2Fapp.component.ts" target="_blank" rel="noopener">这里</a>找到。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><a href="https://indepth.dev/never-again-be-confused-when-implementing-controlvalueaccessor-in-angular-forms/#github--6" target="_blank" rel="noopener">Never again be confused when implementing ControlValueAccessor in Angular forms</a></li>
-<li><a href="https://blog.thoughtram.io/angular/2016/07/27/custom-form-controls-in-angular-2.html" target="_blank" rel="noopener">Custom Form Controls in Angular</a></li>
-</ol>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/11/30/ngModel/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
