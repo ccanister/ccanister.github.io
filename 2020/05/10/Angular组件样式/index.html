@@ -86,12 +86,12 @@
 <meta property="og:site_name" content="稠鱼烧才好吃">
 <meta property="og:description" content="最近遇到了在动态创建模板时候，样式无法附加上去的问题。研究了一下，发现和Angular视图封装模式有关，我们先来模拟一下这个情况：">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2020/05/10/Angular组件样式/zhaorenjie/Documents/blog/source/_posts/Angular组件样式/无法渲染msg.jpeg">
-<meta property="og:updated_time" content="2020-10-08T10:50:52.221Z">
+<meta property="og:image" content="http://yoursite.com/2020/05/10/Angular组件样式/无法渲染msg.jpeg">
+<meta property="og:updated_time" content="2020-12-05T07:16:26.228Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Angular组件样式">
 <meta name="twitter:description" content="最近遇到了在动态创建模板时候，样式无法附加上去的问题。研究了一下，发现和Angular视图封装模式有关，我们先来模拟一下这个情况：">
-<meta name="twitter:image" content="http://yoursite.com/2020/05/10/Angular组件样式/zhaorenjie/Documents/blog/source/_posts/Angular组件样式/无法渲染msg.jpeg">
+<meta name="twitter:image" content="http://yoursite.com/2020/05/10/Angular组件样式/无法渲染msg.jpeg">
 
 
 
@@ -346,7 +346,7 @@
 <p>可以在组件元数据中的<code>encapsulation</code> 属性来设置组件封装模式：</p>
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">encapsulation: ViewEncapsulation.Native</span><br></pre></td></tr></table></figure>
 <p>我们以上述例子着重来分析第三种封装模式，可以看到<code>div</code>节点的选择器多了一些东西，而<code>timestamp</code>并无变化。</p>
-<p><img src="/2020/05/10/Angular组件样式/zhaorenjie/Documents/blog/source/_posts/Angular组件样式/无法渲染msg.jpeg" alt="无法渲染msg" style="zoom: 50%;"></p>
+<p><img src="/2020/05/10/Angular组件样式/无法渲染msg.jpeg" alt="无法渲染msg" style="zoom: 50%;"></p>
 <p>这说明仿真模式其实是对DOM节点设置了属性，属性名采用了自增ID以防止名字的冲突。那么为什么<code>timestamp</code>类并后面没有紧跟属性选择器呢？思考一下，Angular是需要经过编译的，样式代码应该在编译过程中会被替换成<code>_ngcontent-xxx</code>格式，而HTML模板编译出来的组件工厂 <code>xx.ngfactory.js</code>会在内部创建节点的过程中设置相同名称的属性。但是我们动态创建的模板直接对html属性赋值字符串的，并没有走Angular内部的创建节点过程，所以导致节点并没有设置属性。</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 编译出来的css --&gt;</span></span><br><span class="line">.msg[_ngcontent-xx] &#123;</span><br><span class="line">	.timestamp &#123;</span><br><span class="line">		xxx</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">&lt;!-- html动态生成后 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">_ngcontent-xxx</span> <span class="attr">class</span>=<span class="string">"msg"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 赋值了html字符串后,没有设置上属性 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">_ngcontent-xxx</span> <span class="attr">class</span>=<span class="string">"msg"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"timestamp"</span>&gt;</span>xx<span class="tag">&lt;/<span class="name">span</span>&gt;</span>	</span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>那么该如何解决这个问题呢？我们再来想平时使用的<code>:host</code>选择器和<code>::ng-deep</code>伪类的作用，当加上<code>:host ::ng-deep</code>选择器后，如果子组件也是仿真模式，那么父组件只要样式权重较大就可以覆盖子组件的样式。而如果直接以<code>::ng-deep</code> 伪类的选择器，按照Angular文档的解释，会完全禁止css样式的包装，从而变成全局样式。我们给msg类分别添加两种选择器看看。</p>
