@@ -86,12 +86,12 @@
 <meta property="og:site_name" content="稠鱼烧才好吃">
 <meta property="og:description" content="websocket这两年已经不是新鲜的事了，服务器可以通过它主动推送数据到客户端，替代了长轮询。最常见的就是webpack-dev-serve，当按下保存键时候浏览器会自动刷新。其中原理也是通过webscoket通知浏览器原地刷新。热更新也是基于此，会把增量更新传递给浏览器。 websocket服务器是TCP的应用程序，基于HTTP/1.1协议握手。利用http协议握手的话，能让webscoket">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2019/11/10/用node写个webscoket服务器/zhaorenjie/Documents/blog/source/_posts/websocket/我是大白的数据帧.png">
-<meta property="og:updated_time" content="2020-10-08T10:54:26.564Z">
+<meta property="og:image" content="http://yoursite.com/2019/11/10/用node写个webscoket服务器/我是大白的数据帧.png">
+<meta property="og:updated_time" content="2020-12-05T07:41:57.959Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="用node写个webscoket服务器">
 <meta name="twitter:description" content="websocket这两年已经不是新鲜的事了，服务器可以通过它主动推送数据到客户端，替代了长轮询。最常见的就是webpack-dev-serve，当按下保存键时候浏览器会自动刷新。其中原理也是通过webscoket通知浏览器原地刷新。热更新也是基于此，会把增量更新传递给浏览器。 websocket服务器是TCP的应用程序，基于HTTP/1.1协议握手。利用http协议握手的话，能让webscoket">
-<meta name="twitter:image" content="http://yoursite.com/2019/11/10/用node写个webscoket服务器/zhaorenjie/Documents/blog/source/_posts/websocket/我是大白的数据帧.png">
+<meta name="twitter:image" content="http://yoursite.com/2019/11/10/用node写个webscoket服务器/我是大白的数据帧.png">
 
 
 
@@ -369,7 +369,7 @@
 <center>[取自MDN]</center>
 
 <p>我们来结合具体的数据帧来解读，假设客户端现在向服务端发送了<code>我是大白</code>的数据，服务端收到的数据是这样的：</p>
-<p><img src="/2019/11/10/用node写个webscoket服务器/zhaorenjie/Documents/blog/source/_posts/websocket/我是大白的数据帧.png" alt="我是大白的数据帧"></p>
+<p><img src="/2019/11/10/用node写个webscoket服务器/我是大白的数据帧.png" alt="我是大白的数据帧"></p>
 <p>websocket的数据帧从81开始，灰色部分都是辅助信息，之后才是发送的数据，图片里已经显示了发送的数据。</p>
 <ul>
 <li><p>FIN表示该帧是否是发送数据的最后一个片段，如果我们发送的数据过长就会分成多个数据帧发送。</p>

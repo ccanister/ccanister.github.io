@@ -86,14 +86,14 @@
 <meta property="og:site_name" content="稠鱼烧才好吃">
 <meta property="og:description" content="undersocre是一个 JavaScript 工具库，它提供了一整套函数式编程的实用功能，但是没有扩展任何 JavaScript 内置对象。其中提供了100多个函数，包括常用的：map、filter、invoke — 当然还有更多专业的辅助函数，如：函数绑定、JavaScript 模板功能、创建快速索引、强类型相等测试等等。 我之前用underscore较少，所以在看这种源码的时候，最好自己根">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/underscore源码解析/zhaorenjie/Documents/blog/source/_posts/underscore/nothing.gif">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/underscore源码解析/zhaorenjie/Documents/blog/source/_posts/underscore/debounce.gif">
-<meta property="og:image" content="http://yoursite.com/2020/03/10/underscore源码解析/zhaorenjie/Documents/blog/source/_posts/underscore/throttle.gif">
-<meta property="og:updated_time" content="2020-10-08T10:52:05.055Z">
+<meta property="og:image" content="http://yoursite.com/2020/03/10/underscore源码解析/nothing.gif">
+<meta property="og:image" content="http://yoursite.com/2020/03/10/underscore源码解析/debounce.gif">
+<meta property="og:image" content="http://yoursite.com/2020/03/10/underscore源码解析/throttle.gif">
+<meta property="og:updated_time" content="2020-12-05T07:22:18.820Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="underscore源码解析">
 <meta name="twitter:description" content="undersocre是一个 JavaScript 工具库，它提供了一整套函数式编程的实用功能，但是没有扩展任何 JavaScript 内置对象。其中提供了100多个函数，包括常用的：map、filter、invoke — 当然还有更多专业的辅助函数，如：函数绑定、JavaScript 模板功能、创建快速索引、强类型相等测试等等。 我之前用underscore较少，所以在看这种源码的时候，最好自己根">
-<meta name="twitter:image" content="http://yoursite.com/2020/03/10/underscore源码解析/zhaorenjie/Documents/blog/source/_posts/underscore/nothing.gif">
+<meta name="twitter:image" content="http://yoursite.com/2020/03/10/underscore源码解析/nothing.gif">
 
 
 
@@ -455,13 +455,13 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不设置callNow写法</span></span><br><span class="line"> <span class="keyword">if</span> (immediate) &#123;</span><br><span class="line">   <span class="keyword">if</span> (timer == <span class="literal">null</span>) &#123;</span><br><span class="line">     result = func();</span><br><span class="line">   &#125;</span><br><span class="line">   timer = setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">     timer = <span class="literal">null</span>;</span><br><span class="line">   &#125;, wait);</span><br><span class="line">   <span class="keyword">return</span> result;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> counter = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">var</span> debouncedIncr = debounce(</span><br><span class="line">  <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    counter++;</span><br><span class="line">    <span class="keyword">if</span> (counter &lt; <span class="number">10</span>) debouncedIncr();</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="number">32</span>,</span><br><span class="line">  <span class="literal">true</span></span><br><span class="line">);</span><br><span class="line">debouncedIncr();	<span class="comment">// 输出10</span></span><br><span class="line"><span class="built_in">console</span>.log(counter);</span><br><span class="line">delay(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(counter);	<span class="comment">// 输出10</span></span><br><span class="line">&#125;, <span class="number">96</span>);</span><br></pre></td></tr></table></figure>
 <p>因为一直在递归调用，本来该输出1。但是由于我们先执行传入的函数，再去设置timer，就会导致永远进不到设置timer这步。</p>
 <h3 id="可视化演示"><a href="#可视化演示" class="headerlink" title="可视化演示"></a>可视化演示</h3><p>下面是分别是不加任何修饰的滚屏，加了节流的的滚屏以及加了防抖的滚屏。</p>
-<p><img src="/2020/03/10/underscore源码解析/zhaorenjie/Documents/blog/source/_posts/underscore/nothing.gif" alt="nothing"></p>
+<p><img src="/2020/03/10/underscore源码解析/nothing.gif" alt="nothing"></p>
 <center>正常滚动屏幕</center>
 
-<p><img src="/2020/03/10/underscore源码解析/zhaorenjie/Documents/blog/source/_posts/underscore/debounce.gif" alt="debounce"></p>
+<p><img src="/2020/03/10/underscore源码解析/debounce.gif" alt="debounce"></p>
 <center>加了debounce后，停止滚动几百毫秒后，数字才加一</center>
 
-<p><img src="/2020/03/10/underscore源码解析/zhaorenjie/Documents/blog/source/_posts/underscore/throttle.gif" alt="throttle"></p>
+<p><img src="/2020/03/10/underscore源码解析/throttle.gif" alt="throttle"></p>
 <center>加了throttle后，每隔一段时间数字就会加一</center>
 
 <h2 id="类型判断"><a href="#类型判断" class="headerlink" title="类型判断"></a>类型判断</h2><p>js有7种类型：number、boolean、string、null、undefined、symbol和引用类型。</p>

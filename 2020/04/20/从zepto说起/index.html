@@ -86,13 +86,13 @@
 <meta property="og:site_name" content="稠鱼烧才好吃">
 <meta property="og:description" content="学完underscore源码，操作对象和常用的函数等应该都是手到擒来了。接下来来看DOM操作，毕竟是前端，更多还是为浏览器服务的。jquery源码点进去一看几千行吧，吓得退了出来，后来发现还有zepto也是针对浏览器的js库，而且更为轻量，没有较多的兼容低版本代码，所以选择看zepto源码。 zepto的测试用例比较恶心，框架好像是自己搭的，测试用例出错的时候也不会说明是哪个出错，只有统计结果xx">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2020/04/20/从zepto说起/zhaorenjie/Documents/blog/source/_posts/从zepto说起/图片尺寸.jpeg">
-<meta property="og:image" content="http://yoursite.com/2020/04/20/从zepto说起/zhaorenjie/Documents/blog/source/_posts/从zepto说起/offsetParent.jpg">
-<meta property="og:updated_time" content="2020-10-08T10:52:02.856Z">
+<meta property="og:image" content="http://yoursite.com/2020/04/20/从zepto说起/图片尺寸.jpeg">
+<meta property="og:image" content="http://yoursite.com/2020/04/20/从zepto说起/offsetParent.jpg">
+<meta property="og:updated_time" content="2020-12-05T07:18:49.726Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从zepto说起">
 <meta name="twitter:description" content="学完underscore源码，操作对象和常用的函数等应该都是手到擒来了。接下来来看DOM操作，毕竟是前端，更多还是为浏览器服务的。jquery源码点进去一看几千行吧，吓得退了出来，后来发现还有zepto也是针对浏览器的js库，而且更为轻量，没有较多的兼容低版本代码，所以选择看zepto源码。 zepto的测试用例比较恶心，框架好像是自己搭的，测试用例出错的时候也不会说明是哪个出错，只有统计结果xx">
-<meta name="twitter:image" content="http://yoursite.com/2020/04/20/从zepto说起/zhaorenjie/Documents/blog/source/_posts/从zepto说起/图片尺寸.jpeg">
+<meta name="twitter:image" content="http://yoursite.com/2020/04/20/从zepto说起/图片尺寸.jpeg">
 
 
 
@@ -431,7 +431,7 @@
 </ul>
 <p>当然行内元素的宽度都是0。zepto返回的元素宽度用的是scrollWidth。</p>
 <p>除此之外，也可以通过el.getBoundingClientRect方法获取，它计算出的width等于右border-左border，看起来和offsetWidth一样。但是这个width是实际渲染出来的宽度，比如说附加了<code>transform:scale(1.5)</code>样式，对于offsetWidth是不会变的，而getBoundingClientRect方法返回的宽度会乘以1.5倍，是实际呈现为准。同理getBoundingClientRect方法返回的top也是从窗口上方开始到元素的border（不包含）为止的高度。如果该元素是可滚动，那么top也是可变的。</p>
-<p><img src="/2020/04/20/从zepto说起/zhaorenjie/Documents/blog/source/_posts/从zepto说起/图片尺寸.jpeg" alt="图片尺寸" style="zoom:67%;"></p>
+<p><img src="/2020/04/20/从zepto说起/图片尺寸.jpeg" alt="图片尺寸" style="zoom:67%;"></p>
 <center>偷了别人的图</center>
 
 <p>上述宽度都是针对元素节点，如果是window，我们一般用innerWidth获取宽度，因为outerHeight往往包括了浏览器的任务栏和窗口高度等。如果是document，我们返回内容宽度即offsetWidth。</p>
@@ -440,7 +440,7 @@
 <h2 id="偏移"><a href="#偏移" class="headerlink" title="偏移"></a>偏移</h2><h3 id="offsetParent"><a href="#offsetParent" class="headerlink" title="offsetParent"></a>offsetParent</h3><p>返回第一个定位过的祖先元素，即祖先元素的的position不是static。DOM原声就有offsetParent属性，但是如果当元素隐藏起来的时候，offsetParent返回null，zepto返回的是body对象。</p>
 <h3 id="offset"><a href="#offset" class="headerlink" title="offset"></a>offset</h3><p>offset方法类似getBoundingClientRect方法，获取元素的渲染后的width、height、top和left。如果元素既不是html（根据document.documentElement判断）也不在文档中，则返回<code>{top: 0, left: 0}</code>。之前有说过getBoundingClientRect返回的top指的是从窗口上方开始到元素的border为止（不包含）的高度，如果当前文档已滚动，那么取得的top是不准的，所以还要加上window.pageYOffset。</p>
 <p>设置值的时候，不能直接赋予元素偏移值。</p>
-<p><img src="/2020/04/20/从zepto说起/zhaorenjie/Documents/blog/source/_posts/从zepto说起/offsetParent.jpg" alt="offsetParent" style="zoom:50%;"></p>
+<p><img src="/2020/04/20/从zepto说起/offsetParent.jpg" alt="offsetParent" style="zoom:50%;"></p>
 <p>如上图所示，元素的偏移量会根据第一个定位过的祖先元素而变化，假设祖先元素的top为100，元素需要设置的top为100，如果直接设置，会导致最后的top为200。所以最终的偏移量应该减去祖先元素的偏移量才是正确的。如果元素的定位属性是<code>static</code>，则会将其改为<code>relative</code>定位，再相对于其正常文档流来计算。</p>
 <h3 id="position"><a href="#position" class="headerlink" title="position"></a>position</h3><p>position方法返回相对于第一个定位过的祖先元素的位置，即<code>{top: xx,left: xx}</code>。如果元素是body或者html节点直接返回<code>{top: 0, left: 0}</code>。</p>
 <p>整体思路还是用当前元素相对于文档的位置减去第一个定位祖先元素相对于文档的位置，需要注意的是top从祖先元素的padding（包含）开始直到当前元素的border（包含）。</p>
